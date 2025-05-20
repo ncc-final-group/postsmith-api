@@ -5,9 +5,9 @@ import lombok.Getter;
 import java.util.Map;
 
 @Getter
-public class GoogleAuthenticatinoDto implements OAuth2Response {
+public class GoogleAuthenticationDto implements OAuth2Response {
     private final Map<String, Object> attributes;
-    public GoogleAuthenticatinoDto(Map<String, Object> attributes) {
+    public GoogleAuthenticationDto(Map<String, Object> attributes) {
         this.attributes = attributes;
     }
 
