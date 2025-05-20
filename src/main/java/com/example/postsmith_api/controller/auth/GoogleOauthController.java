@@ -9,4 +9,8 @@ public class GoogleOauthController {
     public String googleLogin() {
         return "login";
     }
+    @GetMapping("/login-failure")
+    public String googleLoginFailure() {
+        return "login-failure";
+    }
 }

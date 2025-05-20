@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Slf4j
@@ -15,21 +16,24 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuthSuccessHandler oAuthSuccessHandler;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/","/oauth2/**", "/auth/**","/login/**").permitAll()
+                        .requestMatchers("/","/oauth2/**", "/auth/**","/login/**", "/error").permitAll()
                         .anyRequest().authenticated()
                 )
-                .csrf(Customizer.withDefaults())
-                .oauth2Login(oauth2 -> oauth2.loginPage("/login").userInfoEndpoint(
-                        userInfoEndpointConfig ->
+                .csrf(AbstractHttpConfigurer::disable)
+                //.csrf(Customizer.withDefaults())
+                .oauth2Login(oauth2 -> oauth2.loginPage("/login")
+                        .userInfoEndpoint(userInfoEndpointConfig ->
                                 userInfoEndpointConfig.userService(customOAuth2UserService))
                         .defaultSuccessUrl("/home")
-                )
-                //.formLogin(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults());
+                        .failureUrl("/login-failure")
+                        .permitAll())
+
+                .formLogin(form->form.disable());
 
         return http.build();
     }
