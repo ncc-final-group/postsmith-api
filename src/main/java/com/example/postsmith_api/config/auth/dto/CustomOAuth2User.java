@@ -19,7 +19,9 @@ public class CustomOAuth2User implements OAuth2User {
     public String getName() {
         return oAuth2Response.getName();
     }
-
+    public String getProvider() {
+        return oAuth2Response.getProvider();
+    }
     @Override
     public Map<String, Object> getAttributes() {
         return oAuth2Response.getAttributes();
