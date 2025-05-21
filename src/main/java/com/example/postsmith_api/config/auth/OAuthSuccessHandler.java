@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -34,10 +35,20 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         OAuth2User oauthUser = oauthToken.getPrincipal();
         CustomOAuth2User customUser = (CustomOAuth2User) oauthUser;
         String provider = customUser.getProvider();
-
-        String email = oauthUser.getAttribute("email");
-        String name = oauthUser.getAttribute("name");
-
+        String email = null;
+        String name = null;
+        if(provider.equals("google")){
+            email = oauthUser.getAttribute("email");
+            name = oauthUser.getAttribute("name");
+        }else if(provider.equals("kakao")) {
+            HashMap<String, Object> account = oauthUser.getAttribute("kakao_account");
+            email = (String) account.get("email");
+            name = "test";
+        }else if(provider.equals("naver")) {
+            HashMap<String, Object> authResponse = oauthUser.getAttribute("response");
+            email = (String) authResponse.get("email");
+            name = (String) authResponse.get("name");
+        }
         log.info("🎉 OAuth2 로그인 성공: name={}, email={}", name, email);
 
         // 세션 ID 대신 직접 생성하는 키 (예: UUID)
@@ -55,6 +66,6 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         response.addCookie(sessionCookie);
 
         // 로그인 후 리디렉트할 URL
-        response.sendRedirect("/home");
+        response.sendRedirect("http://localhost:8090/api1/home");
     }
 }
