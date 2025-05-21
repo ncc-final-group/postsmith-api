@@ -25,11 +25,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/","/oauth2/**", "/auth/**","/login/**", "/api1/**").permitAll()
+                        .requestMatchers("/","/oauth2/**", "/auth/**", "/api1/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(Customizer.withDefaults())
-                .oauth2Login(oauth2 -> oauth2.loginPage("/login").userInfoEndpoint(
+                .oauth2Login(oauth2 -> oauth2.loginPage("/auth/login").userInfoEndpoint(
                         userInfoEndpointConfig ->
                                 userInfoEndpointConfig.userService(customOAuth2UserService))
                         .successHandler(oAuthSuccessHandler)

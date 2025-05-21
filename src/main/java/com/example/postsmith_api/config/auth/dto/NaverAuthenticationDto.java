@@ -1,19 +1,20 @@
 package com.example.postsmith_api.config.auth.dto;
 
-import lombok.Getter;
-
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-@Getter
-public class GoogleAuthenticationDto implements OAuth2Response {
+public class NaverAuthenticationDto implements OAuth2Response {
     private final Map<String, Object> attributes;
-    public GoogleAuthenticationDto(Map<String, Object> attributes) {
+    private HashMap<String, Object> response;
+    public NaverAuthenticationDto(Map<String, Object> attributes) {
         this.attributes = attributes;
+        response = (HashMap<String, Object>) attributes.get("response");
     }
 
     @Override
     public String getProvider() {
-        return "google";
+        return "kakao";
     }
 
     @Override
@@ -23,12 +24,14 @@ public class GoogleAuthenticationDto implements OAuth2Response {
 
     @Override
     public String getEmail() {
-        return attributes.get("email").toString();
+        return (String) response.get("email");
     }
-
+    public String getProfileImage() {
+        return (String) response.get("profile_image");
+    }
     @Override
     public String getName() {
-        return attributes.get("name").toString();
+        return (String) response.get("name");
     }
     @Override
     public Map<String, Object> getAttributes() {

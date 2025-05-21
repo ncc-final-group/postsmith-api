@@ -35,11 +35,12 @@ public class User extends BaseTimeEntity{
     private Role role;
 
     @Builder
-    public User(String name, String email, String picture, Role role) {
+    public User(String name, String email, String picture, Role role, String provider) {
         this.name = name;
         this.email = email;
         this.picture = picture;
         this.role = role;
+        this.provider = provider;
     }
     public String getRoleKey() {
         return this.role.getKey();
@@ -48,5 +49,16 @@ public class User extends BaseTimeEntity{
         this.name = name;
         this.picture = picture;
         return this;
+    }
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", picture='" + picture + '\'' +
+                ", provider='" + provider + '\'' +
+                ", role=" + role +
+                '}';
     }
 }
