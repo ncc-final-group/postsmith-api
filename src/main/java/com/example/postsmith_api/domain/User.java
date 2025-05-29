@@ -1,5 +1,6 @@
 package com.example.postsmith_api.domain;
 
+import com.example.postsmith_api.domain.baseEntity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Table(name = "users")
 @Getter
-public class User extends BaseTimeEntity{
+public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
