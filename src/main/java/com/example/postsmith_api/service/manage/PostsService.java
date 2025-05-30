@@ -1,7 +1,7 @@
-package com.example.postsmith_api.service.post;
+package com.example.postsmith_api.service.manage;
 
 import com.example.postsmith_api.domain.blog.Posts;
-import com.example.postsmith_api.repository.blog.PostsRepository;
+import com.example.postsmith_api.repository.manage.PostsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
