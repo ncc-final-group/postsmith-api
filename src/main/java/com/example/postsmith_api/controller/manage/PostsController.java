@@ -1,4 +1,4 @@
-package com.example.postsmith_api.controller.post;
+package com.example.postsmith_api.controller.manage;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

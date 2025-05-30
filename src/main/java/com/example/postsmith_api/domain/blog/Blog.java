@@ -13,6 +13,6 @@ public class Blog {
     @Column(name = "user_id", nullable = false)
     private int userId;
     @Column(name = "blog_category_id")
-    private List<Integer> blogCategoryId;
-
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<BlogCategory> blogCategoryList;
 }

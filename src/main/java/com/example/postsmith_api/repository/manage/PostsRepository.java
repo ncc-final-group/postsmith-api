@@ -1,4 +1,4 @@
-package com.example.postsmith_api.repository.blog;
+package com.example.postsmith_api.repository.manage;
 
 import com.example.postsmith_api.domain.blog.Posts;
 import org.springframework.data.jpa.repository.JpaRepository;
