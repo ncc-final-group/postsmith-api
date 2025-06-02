@@ -17,15 +17,17 @@ public class Posts extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "blog_id")
-    private int blogId;
-    @Column(name = "category_id")
-    private int category_id;
+    @JoinColumn(name = "blog_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Blog blogId;
+    @JoinColumn(name = "category_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    private Category categoryId;
     private String title;
     @Column(name = "content_html")
     private String contentHtml;
-    @Column(name = "content_preview")
-    private String contentPreview;
+    @Column(name = "content_clean")
+    private String contentClean;
     @Column(name = "created_at", insertable = false, updatable = false)
     private Timestamp createdAt;
     private int views;

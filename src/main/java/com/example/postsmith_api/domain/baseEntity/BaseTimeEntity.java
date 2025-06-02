@@ -5,13 +5,15 @@ import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
+import java.sql.Timestamp;
+
 @MappedSuperclass
 @Getter
 public class BaseTimeEntity {
     @CreatedDate
     @Column(name = "created_at", insertable = false, updatable = false)
-    private Long createdAt;
+    private Timestamp createdAt;
     @CreatedDate
     @Column(name = "updated_at", insertable = false, updatable = false)
-    private Long updatedAt;
+    private Timestamp updatedAt;
 }
