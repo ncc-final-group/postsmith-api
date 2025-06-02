@@ -14,7 +14,7 @@ import lombok.Setter;
 public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
 
     @Setter
