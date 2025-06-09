@@ -1,0 +1,45 @@
+package com.postsmith.api.entity;
+
+import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "replies")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class RepliesEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private UsersEntity user; // FK > users.id
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "content_id", nullable = false, referencedColumnName = "id")
+    private ContentsEntity content; // FK > contents.id
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reply_id", referencedColumnName = "id")
+    private RepliesEntity parentReply; // 부모 댓글 아이디: FK > replies.id
+
+    @Column(name = "content", columnDefinition = "TEXT")
+    private String contentText; // 댓글 내용
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    @Builder
+    public RepliesEntity(UsersEntity user, ContentsEntity content, RepliesEntity parentReply, String contentText) {
+        this.user = user;
+        this.content = content;
+        this.parentReply = parentReply;
+        this.contentText = contentText;
+    }
+}

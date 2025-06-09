@@ -1,0 +1,51 @@
+package com.postsmith.api.entity;
+
+import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "blogs")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class BlogsEntity {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
+	private UsersEntity user; // FK > users.id
+
+	@Column(name = "name", length = 255, nullable = false)
+	private String name; // 블로그 이름
+
+	@Column(name = "nickname", length = 255, nullable = false)
+	private String nickname; // 블로그 닉네임
+	
+	@Column(name = "address", length = 32, nullable = false)
+	private String address; // 블로그 주소
+
+	@Column(name = "description", columnDefinition = "TEXT")
+	private String description; // 블로그 설명
+
+	@Column(name = "logo_image", length = 255, nullable = false)
+	private String logoImage; // 로고 이미지 URI
+
+	@Column(name = "created_at")
+	private LocalDateTime createdAt;
+
+	@Column(name = "updated_at")
+	private LocalDateTime updatedAt;
+
+	@Builder
+	public BlogsEntity(UsersEntity user, String name, String nickname, String address, String description, String logoImage) {
+		this.user = user;
+		this.name = name;
+		this.nickname = nickname;
+		this.address = address;
+		this.description = description;
+		this.logoImage = logoImage;
+	}
+}
