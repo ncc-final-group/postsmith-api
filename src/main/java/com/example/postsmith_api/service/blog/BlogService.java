@@ -1,6 +1,6 @@
 package com.example.postsmith_api.service.blog;
 
-import com.example.postsmith_api.domain.blog.Blog;
+import com.example.postsmith_api.domain.blog.Blogs;
 import com.example.postsmith_api.dto.BlogDto;
 import com.example.postsmith_api.repository.manage.BlogRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ public class BlogService {
     private final BlogRepository blogRepository;
     public String createBlog(BlogDto blogDto){
         System.out.println(blogDto);
-        if(blogRepository.existsByBlogUrl(blogDto.getBlogUrl())){
+        if(blogRepository.existsByAddress(blogDto.getAddress())){
             return "Blog URL already exists";
         }
         blogRepository.save(
@@ -20,7 +20,8 @@ public class BlogService {
         );
         return "Blog created successfully";
     }
-    public Blog findBlogByBlogUrl(String blogUrl) {
-        return blogRepository.findByBlogUrl(blogUrl)
-                .orElseThrow(() -> new IllegalArgumentException("Blog not found with URL: " + blogUrl));    }
+    public Blogs findBlogByAddress(String url) {
+            return blogRepository.findByAddress(url)
+                    .orElseThrow(() -> new IllegalArgumentException("Blog not found with URL: " + url));
+    }
 }

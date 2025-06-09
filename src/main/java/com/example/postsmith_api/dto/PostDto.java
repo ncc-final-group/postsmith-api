@@ -9,6 +9,7 @@ public class PostDto {
     private int category;
     private String title;
     private String content;
+    private String postType = "posts"; // Default post type
     @Override
     public String toString() {
         return "PostDto{" +
@@ -17,6 +18,7 @@ public class PostDto {
                 ", category=" + category +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
+                ", postType='" + postType + '\'' +
                 '}';
     }
 }
