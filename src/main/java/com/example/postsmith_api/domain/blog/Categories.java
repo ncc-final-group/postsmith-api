@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category {
+public class Categories {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @JoinColumn(name = "blog_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Blog blogId;
-    @Column(name = "category_name", nullable = false)
+    private Blogs blogId;
+    @Column(name = "name", nullable = false)
     private String categoryName;
     @Column(name = "parent_category_id")
     private int parentCategoryId;
