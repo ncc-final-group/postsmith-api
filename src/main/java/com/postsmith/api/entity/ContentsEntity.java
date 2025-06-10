@@ -2,6 +2,7 @@ package com.postsmith.api.entity;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,6 +10,7 @@ import lombok.*;
 @Table(name = "contents")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ContentsEntity {
 	public enum ContentEnum {
 		POSTS, PAGE, NOTICE
@@ -70,5 +72,41 @@ public class ContentsEntity {
 		this.isTemp = isTemp;
 		this.isPublic = isPublic;
 		this.likes = likes;
+	}
+	
+	@PrePersist
+	protected void onCreate() {
+		this.createdAt = LocalDateTime.now();
+		this.updatedAt = LocalDateTime.now();
+	}
+	
+	@PreUpdate
+	protected void onUpdate() {
+		this.updatedAt = LocalDateTime.now();
+	}
+	
+	// 업데이트를 위한 메서드들
+	public void updateContent(String title, String contentHtml, String contentPlain, Boolean isTemp, Boolean isPublic) {
+		this.title = title;
+		this.contentHtml = contentHtml;
+		this.contentPlain = contentPlain;
+		this.isTemp = isTemp;
+		this.isPublic = isPublic;
+	}
+	
+	public void updateCategory(CategoriesEntity category) {
+		this.category = category;
+	}
+	
+	public void updateType(ContentEnum type) {
+		this.type = type;
+	}
+	
+	public void incrementLikes() {
+		this.likes = (this.likes == null ? 0 : this.likes) + 1;
+	}
+	
+	public void decrementLikes() {
+		this.likes = (this.likes == null || this.likes <= 0) ? 0 : this.likes - 1;
 	}
 }

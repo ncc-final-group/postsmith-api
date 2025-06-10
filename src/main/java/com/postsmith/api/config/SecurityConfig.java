@@ -1,5 +1,6 @@
 package com.postsmith.api.config;
 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,14 +11,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests(
-				authorize -> authorize.requestMatchers("/**").permitAll().anyRequest().authenticated())
-				.csrf(AbstractHttpConfigurer::disable)
-				// .csrf(Customizer.withDefaults())
-				.formLogin(form -> form.disable());
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(
+                        authorize -> authorize.requestMatchers("/**").permitAll().anyRequest().authenticated())
+                .csrf(AbstractHttpConfigurer::disable)
+                // .csrf(Customizer.withDefaults())
+                .formLogin(form -> form.disable());
 
-		return http.build();
-	}
+        return http.build();
+    }
 }
