@@ -34,6 +34,4 @@ public class Contents extends BaseTimeEntity {
     private String contentPlain;
     @Column(name = "created_at", insertable = false, updatable = false)
     private Timestamp createdAt;
-    private int views;
-    private int likes;
 }
