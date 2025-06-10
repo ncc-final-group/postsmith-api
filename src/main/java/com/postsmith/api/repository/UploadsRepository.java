@@ -1,3 +1,4 @@
+/*
 package com.postsmith.api.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,3 +9,4 @@ import com.postsmith.api.entity.UploadsEntity;
 @Repository
 public interface UploadsRepository extends JpaRepository<UploadsEntity, Integer> {
 }
+*/

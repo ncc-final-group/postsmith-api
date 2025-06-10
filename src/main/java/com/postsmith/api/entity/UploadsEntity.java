@@ -1,4 +1,4 @@
-package com.postsmith.api.entity;
+/* package com.postsmith.api.entity;
 
 import java.time.LocalDateTime;
 
@@ -33,4 +33,4 @@ public class UploadsEntity {
 		this.uri = uri;
 		this.filename = filename;
 	}
-}
+} */

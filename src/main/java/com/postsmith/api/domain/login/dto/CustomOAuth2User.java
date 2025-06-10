@@ -1,3 +1,4 @@
+/*
 package com.postsmith.api.domain.login.dto;
 
 import lombok.AllArgsConstructor;
@@ -44,3 +45,4 @@ public class CustomOAuth2User implements OAuth2User {
         return oAuth2Response.getProvider()+ "_" + oAuth2Response.getProviderId();
     }
 }
+*/

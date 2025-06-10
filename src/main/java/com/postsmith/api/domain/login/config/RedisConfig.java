@@ -1,3 +1,4 @@
+/*
 package com.postsmith.api.domain.login.config;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -37,3 +38,4 @@ public class RedisConfig {
 		return template;
 	}
 }
+*/
