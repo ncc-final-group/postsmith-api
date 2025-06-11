@@ -23,6 +23,9 @@ public class CategoryService {
     private final CategoriesRepository categoryRepository;
     private final BlogsRepository blogsRepository;
 
+    List<CategoriesEntity> allCategories = categoryRepository.findAll();
+    List<CategoriesEntity> toUpdate = new ArrayList<>();
+
     @Transactional
     public CategoriesEntity createCategory(CategoryDto dto) {
         // 필수 필드 검증
@@ -112,27 +115,82 @@ public class CategoryService {
         return dto;
     }
 
-    @Transactional
     public void deleteCategory(int id) {
-        CategoriesEntity category = categoryRepository.findById(id)
+        List<CategoriesEntity> allCategories = categoryRepository.findAll(); // 🔹 모든 카테고리 한 번만 조회
+
+        CategoriesEntity category = allCategories.stream()
+                .filter(c -> c.getId() == id)
+                .findFirst()
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
-        // 자식 카테고리들 찾기
-        List<CategoriesEntity> children = categoryRepository.findAll().stream()
-                .filter(c -> c.getCategory() != null && c.getCategory().getId().equals(id))
-                .collect(Collectors.toList());
+        List<CategoriesEntity> children = findChildCategories(category, allCategories);
 
-        // 자식 카테고리들의 부모 참조 제거
-        for (CategoriesEntity child : children) {
-            child.setCategory(null);  // 직접 엔티티 수정
-            categoryRepository.save(child);
-            log.info("Updated child category {} to remove parent reference", child.getId());
+        if (!children.isEmpty()) {
+            updateLaterCategoriesSequence(category, children.size(), allCategories);  // 수정 필요
+            moveChildrenToParent(children, category); // 아래에서 saveAll()로 개선할 예정
+        } else {
+            decrementLaterCategoriesSequence(category, allCategories); // 수정 필요
         }
 
-        // 카테고리 삭제
         categoryRepository.deleteById(id);
-        log.info("Deleted category {}", id);
     }
+
+
+
+    private List<CategoriesEntity> findChildCategories(CategoriesEntity parent, List<CategoriesEntity> all) {
+        return all.stream()
+                .filter(c -> c.getCategory() != null && c.getCategory().getId().equals(parent.getId()))
+                .collect(Collectors.toList());
+    }
+
+    // 같은 레벨의 뒤쪽 카테고리들 찾기
+    private List<CategoriesEntity> findLaterCategories(CategoriesEntity category,List<CategoriesEntity> all) {
+        return all.stream()
+                .filter(c -> isInSameLevel(c, category) && c.getSequence() > category.getSequence())
+                .collect(Collectors.toList());
+    }
+
+    // 같은 레벨인지 확인
+    private boolean isInSameLevel(CategoriesEntity c1, CategoriesEntity c2) {
+        return (c1.getCategory() == null && c2.getCategory() == null) ||
+                (c1.getCategory() != null && c2.getCategory() != null &&
+                        c1.getCategory().getId().equals(c2.getCategory().getId()));
+    }
+
+    // 뒤쪽 카테고리들의 시퀀스 증가
+    private void updateLaterCategoriesSequence(CategoriesEntity category, int increment, List<CategoriesEntity> all) {
+        List<CategoriesEntity> toUpdate = findLaterCategories(category, all);
+        toUpdate.forEach(c -> c.changeSequence(c.getSequence() + increment));
+        categoryRepository.saveAll(toUpdate); // 🔹 saveAll로 일괄 저장
+    }
+
+    private void decrementLaterCategoriesSequence(CategoriesEntity category, List<CategoriesEntity> all) {
+        List<CategoriesEntity> toUpdate = findLaterCategories(category, all);
+        toUpdate.forEach(c -> c.changeSequence(c.getSequence() - 1));
+        categoryRepository.saveAll(toUpdate); // 🔹 saveAll로 일괄 저장
+    }
+
+    // 자식들을 상위 카테고리로 이동
+    private void moveChildrenToParent(List<CategoriesEntity> children, CategoriesEntity category) {
+        int nextSequence = category.getSequence();
+        for (CategoriesEntity child : children) {
+            child.changeCategory(category.getCategory()); // 상위로 이동
+            child.changeSequence(nextSequence++); // 시퀀스 재부여
+        }
+        categoryRepository.saveAll(children); // 🔹 일괄 저장
+    }
+
+    // 시퀀스 관련 헬퍼 메서드들
+    private Integer getMaxSequence(Integer categoryId) {
+        return categoryRepository.findAll().stream()
+                .filter(c -> (categoryId == null && c.getCategory() == null) ||
+                        (categoryId != null && c.getCategory() != null &&
+                                c.getCategory().getId().equals(categoryId)))
+                .map(CategoriesEntity::getSequence)
+                .max(Integer::compareTo)
+                .orElse(-1);
+    }
+
 
     @Transactional
     public CategoriesEntity updateCategory(int id, CategoryDto dto) {

@@ -1,12 +1,11 @@
 /*
 package com.postsmith.api.repository;
 
+import com.postsmith.api.entity.MediaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.postsmith.api.entity.UploadsEntity;
-
 @Repository
-public interface UploadsRepository extends JpaRepository<UploadsEntity, Integer> {
+public interface MediaRepository extends JpaRepository<MediaEntity, Integer> {
 }
 */

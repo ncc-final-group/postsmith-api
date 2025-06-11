@@ -1,4 +1,5 @@
-/* package com.postsmith.api.entity;
+/*
+ package com.postsmith.api.entity;
 
 import java.time.LocalDateTime;
 
@@ -6,10 +7,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "uploads")
+@Table(name = "media")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UploadsEntity {
+public class MediaEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -28,9 +29,10 @@ public class UploadsEntity {
 	private LocalDateTime createdAt;
 
 	@Builder
-	public UploadsEntity(BlogsEntity blog, String uri, String filename) {
+	public MediaEntity(BlogsEntity blog, String uri, String filename) {
 		this.blog = blog;
 		this.uri = uri;
 		this.filename = filename;
 	}
-} */
+}
+*/

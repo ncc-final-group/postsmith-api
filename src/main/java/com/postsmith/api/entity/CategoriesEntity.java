@@ -31,6 +31,16 @@ public class CategoriesEntity {
 	@Column(name = "description", columnDefinition = "TEXT")
 	private String description; // 카테고리 설명
 
+	// 시퀀스 변경을 위한 비즈니스 메서드
+	public void changeSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+
+	// 카테고리 이동을 위한 비즈니스 메서드
+	public void changeCategory(CategoriesEntity parent) {
+		this.category = parent;
+	}
+
 	@Builder
 	public CategoriesEntity(BlogsEntity blog, CategoriesEntity category, Integer sequence, String name, String description) {
 		if (blog == null) {
@@ -43,7 +53,5 @@ public class CategoriesEntity {
 		this.description = description;
 	}
 
-	public void setCategory(CategoriesEntity category) {
-		this.category = category;
-	}
+	public void setCategory(CategoriesEntity category) {this.category = category;}
 }
