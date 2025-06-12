@@ -1,6 +1,5 @@
 package com.postsmith.api.domain.login.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -14,33 +13,35 @@ import java.util.Map;
 
 @Data
 public class CustomOAuth2User implements OAuth2User {
-    private final OAuth2Response oAuth2Response;
-    private final UsersEntity.RoleEnum role;
+	private final UsersEntity.RoleEnum role;
 
-    @Override
-    public String getName() {
-        return oAuth2Response.getName();
-    }
+	@Override
+	public String getName() {
+		return "";
+	}
 
-    @Override
-    public Map<String, Object> getAttributes() {
-        return oAuth2Response.getAttributes();
-    }
+	@Override
+	public Map<String, Object> getAttributes() {
+		return Map.of("provider", "");
+	}
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> collection = new ArrayList<>();
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		Collection<GrantedAuthority> collection = new ArrayList<>();
 
-        collection.add(new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-                return role.getKey();
-            }
-        });
+		collection.add(new GrantedAuthority() {
+			private static final long serialVersionUID = 1L;
 
-        return collection;
-    }
-    public String getUsername(){
-        return oAuth2Response.getProvider()+ "_" + oAuth2Response.getProviderId();
-    }
+			@Override
+			public String getAuthority() {
+				return role.name();
+			}
+		});
+
+		return collection;
+	}
+
+	public String getUsername() {
+		return "";
+	}
 }

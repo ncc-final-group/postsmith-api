@@ -22,7 +22,7 @@ public class NotificationsEntity {
 	@JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
 	private UsersEntity user; // FK > users.id
 
-	@Column(name = "type", length = 32, nullable = false)
+	@Column(name = "type", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private NotificationEnum type; // 알림 유형
 

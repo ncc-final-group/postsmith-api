@@ -30,10 +30,11 @@ public class CategoriesEntity {
 	private String description; // 카테고리 설명
 
 	@Builder
-	public CategoriesEntity(BlogsEntity blog, CategoriesEntity category, String name, String description) {
+	public CategoriesEntity(BlogsEntity blog, CategoriesEntity category, String name, Integer sequence, String description) {
 		this.blog = blog;
 		this.category = category;
 		this.name = name;
+		this.sequence = sequence;
 		this.description = description;
 	}
 }
