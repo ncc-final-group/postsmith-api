@@ -53,5 +53,6 @@ public class CategoriesEntity {
 		this.description = description;
 	}
 
-	public void setCategory(CategoriesEntity category) {this.category = category;}
+	public void changeName(String name) {this.name = name;}
+	public void changeDescription(String description) {this.description = description;}
 }

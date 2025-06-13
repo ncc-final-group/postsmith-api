@@ -71,8 +71,15 @@ public class CategoryController {
     // 카테고리 이동
     @PutMapping("/{id}/move")
     public ResponseEntity<CategoryDto> moveCategory(@PathVariable int id,
-                                                    @RequestParam(required = false) Integer newParentId) {
-        CategoriesEntity moved = categoryService.moveCategory(id, newParentId);
+                                                    @RequestParam(required = false) Integer targetId) {
+        CategoriesEntity moved = categoryService.moveCategory(id, targetId);
         return ResponseEntity.ok(entityToDto(moved));
+    }
+
+    // 전체 카테고리 일괄 저장 (변경사항 반영)
+    @PutMapping
+    public ResponseEntity<Void> saveAllCategories(@RequestBody List<CategoryDto> updatedCategories) {
+        categoryService.saveAllCategories(updatedCategories);
+        return ResponseEntity.ok().build();
     }
 }

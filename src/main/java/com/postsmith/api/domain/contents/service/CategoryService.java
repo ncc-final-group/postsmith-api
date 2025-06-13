@@ -82,25 +82,26 @@ public class CategoryService {
         return buildCategoryTree(allCategories);
     }
 
-    private List<CategoryDto> buildCategoryTree(List<CategoriesEntity> allCategories) {
+    private List<CategoryDto> buildCategoryTree(List<CategoriesEntity> allEntities) {
         List<CategoryDto> roots = new ArrayList<>();
         Map<Integer, CategoryDto> dtoMap = new HashMap<>();
 
-        // 루트 카테고리 생성
-        for (CategoriesEntity entity : allCategories) {
-            if (entity.getCategory() == null) {
-                CategoryDto rootDto = convertToDto(entity);
-                roots.add(rootDto);
-                dtoMap.put(entity.getId(), rootDto);
-            }
+        // 모든 엔티티 → DTO 변환 및 맵에 저장 (중복 없이 1회)
+        for (CategoriesEntity entity : allEntities) {
+            CategoryDto dto = convertToDto(entity);
+            dtoMap.put(entity.getId(), dto);
         }
 
-        // 자식 카테고리 연결
-        for (CategoriesEntity entity : allCategories) {
-            if (entity.getCategory() != null) {
+        // 트리 구성
+        for (CategoriesEntity entity : allEntities) {
+            CategoryDto dto = dtoMap.get(entity.getId());
+            if (entity.getCategory() == null) {
+                // 루트 카테고리
+                roots.add(dto);
+            } else {
                 CategoryDto parentDto = dtoMap.get(entity.getCategory().getId());
                 if (parentDto != null) {
-                    parentDto.getChildren().add(convertToDto(entity));
+                    parentDto.getChildren().add(dto);
                 }
             }
         }
@@ -108,20 +109,19 @@ public class CategoryService {
         return roots;
     }
 
+
     private CategoryDto convertToDto(CategoriesEntity entity) {
         CategoryDto dto = new CategoryDto();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
-        if (entity.getBlog() != null) {
-            dto.setBlogId(entity.getBlog().getId());
-        }
-        if (entity.getCategory() != null) {
-            dto.setCategoryId(entity.getCategory().getId());
-        }
-        dto.setSequence(entity.getSequence());
         dto.setDescription(entity.getDescription());
+        dto.setSequence(entity.getSequence());
+        dto.setBlogId(entity.getBlog().getId());
+        dto.setCategoryId(entity.getCategory() != null ? entity.getCategory().getId() : null);
+        dto.setChildren(new ArrayList<>());
         return dto;
     }
+
 
     /**
      * 카테고리 삭제 (자식 카테고리 처리 포함)
@@ -238,45 +238,66 @@ public class CategoryService {
             }
         }
     }
+
+    private boolean isDescendantOf(CategoriesEntity maybeChild, CategoriesEntity maybeParent, List<CategoriesEntity> all) {
+        if (maybeChild == null || maybeParent == null) return false;
+        CategoriesEntity current = maybeChild.getCategory();
+        while (current != null) {
+            if (current.getId().equals(maybeParent.getId())) return true;
+            current = findCategoryById(current.getId(), all).getCategory();
+        }
+        return false;
+    }
+
+
     //카테고리 이동
     @Transactional
     public CategoriesEntity moveCategory(int dragId, int targetId) {
-        List<CategoriesEntity> allCategories = categoryRepository.findAll();
+        List<CategoriesEntity> all = categoryRepository.findAll();
 
-        CategoriesEntity dragCategory = findCategoryById(dragId, allCategories);
-        CategoriesEntity targetCategory = findCategoryById(targetId, allCategories);
+        CategoriesEntity drag = findCategoryById(dragId, all);
+        CategoriesEntity target = targetId == 0 ? null : findCategoryById(targetId, all);
 
-        if (dragCategory == null || targetCategory == null) {
-            throw new RuntimeException("Invalid drag or target category ID");
+        if (drag == null) throw new RuntimeException("Drag 대상 없음");
+        if (targetId != 0 && target == null) throw new RuntimeException("Target 대상 없음");
+
+        // 🔒 순환 참조 방지
+        if (isDescendantOf(target, drag, all)) {
+            throw new RuntimeException("자기 자식 카테고리 아래로 이동 불가");
         }
 
-        // 1. dragCategory의 현재 부모와 시퀀스 기억
-        CategoriesEntity oldParent = dragCategory.getCategory();
-        int oldSequence = dragCategory.getSequence();
+        // 이동할 전체 서브트리 수집
+        List<CategoriesEntity> subtree = findSubtreeCategories(drag, all);
 
-        // 2. dragCategory 자식 포함 전체 이동 대상 수집
-        List<CategoriesEntity> subtree = findSubtreeCategories(dragCategory, allCategories);
+        // 기존 위치에서 제거 → 시퀀스 감소
+        removeCategoriesFromParentSequence(subtree, all);
 
-        // 3. dragCategory 자식 포함 subtree 제거 후 시퀀스 재조정
-        removeCategoriesFromParentSequence(subtree, allCategories);
+        // 새 위치 설정
+        if (target == null) {
+            // 루트로 승격
+            drag.changeCategory(null);
+            int maxSeq = all.stream()
+                    .filter(c -> c.getCategory() == null)
+                    .mapToInt(c -> c.getSequence() == null ? 0 : c.getSequence())
+                    .max()
+                    .orElse(-1);
+            drag.changeSequence(maxSeq + 1);
+        } else {
+            // 일반 이동 (target의 부모로 이동)
+            CategoriesEntity newParent = target.getCategory();
+            drag.changeCategory(newParent);
+            drag.changeSequence(target.getSequence());
 
-        // 4. targetCategory 부모 동일한 레벨 내 시퀀스 재조정 (target보다 큰 seq +1)
-        List<CategoriesEntity> newSiblings = findLaterSiblings(targetCategory, allCategories);
-        newSiblings.forEach(c -> c.changeSequence(c.getSequence() + subtree.size()));
-        categoryRepository.saveAll(newSiblings);
+            // 기존 형제들 시퀀스 +1
+            List<CategoriesEntity> newSiblings = findLaterSiblings(target, all);
+            newSiblings.forEach(s -> s.changeSequence(s.getSequence() + subtree.size()));
+            categoryRepository.saveAll(newSiblings);
+        }
 
-        // 5. dragCategory를 targetCategory의 자식으로 이동 및 시퀀스 설정
-        dragCategory.changeCategory(targetCategory);
-        dragCategory.changeSequence(targetCategory.getSequence());
-        categoryRepository.save(dragCategory);
-
-        // 6. subtree 자식들은 dragCategory의 하위 카테고리로 유지 (따로 변경 없음)
-        // 필요한 경우 하위 카테고리 시퀀스 조정도 추가 가능
-
-        // 7. 전체 저장
         categoryRepository.saveAll(subtree);
-        return dragCategory;
+        return drag;
     }
+
 
     private CategoriesEntity findCategoryById(int id, List<CategoriesEntity> allCategories) {
         return allCategories.stream()
@@ -306,4 +327,47 @@ public class CategoryService {
         siblings.forEach(c -> c.changeSequence(c.getSequence() - subtree.size()));
         categoryRepository.saveAll(siblings);
     }
+
+    @Transactional
+    public void saveAllCategories(List<CategoryDto> updatedCategories) {
+        Map<Integer, CategoriesEntity> entityMap = categoryRepository.findAll().stream()
+                .collect(Collectors.toMap(CategoriesEntity::getId, c -> c));
+
+        // 블로그는 1개라고 가정
+        BlogsEntity blog = blogsRepository.findById(updatedCategories.get(0).getBlogId())
+                .orElseThrow(() -> new RuntimeException("블로그가 존재하지 않습니다"));
+
+        List<CategoriesEntity> entitiesToSave = new ArrayList<>();
+
+        for (CategoryDto dto : updatedCategories) {
+            CategoriesEntity entity = entityMap.get(dto.getId());
+
+            if (entity != null) {
+                // ✅ 기존 엔티티 직접 수정
+                entity.changeName(dto.getName());
+                entity.changeDescription(dto.getDescription());
+                entity.changeSequence(dto.getSequence());
+
+                CategoriesEntity parent = dto.getCategoryId() == null ? null : entityMap.get(dto.getCategoryId());
+                entity.changeCategory(parent);
+
+                entitiesToSave.add(entity);
+            } else {
+                // ✅ 신규 카테고리 생성 (builder 사용)
+                CategoriesEntity newCategory = CategoriesEntity.builder()
+                        .blog(blog)
+                        .category(dto.getCategoryId() == null ? null : entityMap.get(dto.getCategoryId()))
+                        .sequence(dto.getSequence())
+                        .name(dto.getName())
+                        .description(dto.getDescription())
+                        .build();
+
+                entitiesToSave.add(newCategory);
+            }
+        }
+
+        categoryRepository.saveAll(entitiesToSave);
+    }
+
+
 }
