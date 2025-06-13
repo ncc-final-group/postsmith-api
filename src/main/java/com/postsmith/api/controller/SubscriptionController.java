@@ -3,7 +3,7 @@ package com.postsmith.api.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.postsmith.api.dto.SubscriptionRequestDto;
+import com.postsmith.api.dto.SubscriptionDto;
 import com.postsmith.api.service.SubscriptionService;
 
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class SubscriptionController {
 
     // 구독
     @PostMapping
-    public ResponseEntity<String> subscribe(@RequestBody SubscriptionRequestDto request) {
+    public ResponseEntity<String> subscribe(@RequestBody SubscriptionDto request) {
         subscriptionService.subscribe(request);
         return ResponseEntity.ok("Subscribed successfully.");
     }

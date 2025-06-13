@@ -3,7 +3,7 @@ package com.postsmith.api.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.postsmith.api.dto.SubscriptionRequestDto;
+import com.postsmith.api.dto.SubscriptionDto;
 import com.postsmith.api.entity.*;
 import com.postsmith.api.repository.*;
 
@@ -18,7 +18,7 @@ public class SubscriptionService {
 
     // 구독
     @Transactional
-    public void subscribe(SubscriptionRequestDto request) {
+    public void subscribe(SubscriptionDto request) {
         UsersEntity subscriber = usersRepository.findById(request.getSubscriberId())
             .orElseThrow(() -> new IllegalArgumentException("Subscriber not found"));
 
