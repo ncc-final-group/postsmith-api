@@ -29,4 +29,13 @@ public interface ContentsRepository extends JpaRepository<ContentsEntity, Intege
     
     // 제목으로 검색
     List<ContentsEntity> findByBlogAndTitleContainingIgnoreCaseOrderBySequenceDesc(BlogsEntity blog, String title);
+    
+    // 타입별 콘텐츠 조회
+    List<ContentsEntity> findByBlogAndTypeOrderBySequenceDesc(BlogsEntity blog, ContentsEntity.ContentEnum type);
+    
+    // 임시저장 콘텐츠 조회
+    List<ContentsEntity> findByBlogAndIsTempTrueOrderBySequenceDesc(BlogsEntity blog);
+    
+    // 좋아요 순으로 콘텐츠 조회
+    List<ContentsEntity> findByBlogAndIsPublicTrueOrderByLikesDesc(BlogsEntity blog);
 }

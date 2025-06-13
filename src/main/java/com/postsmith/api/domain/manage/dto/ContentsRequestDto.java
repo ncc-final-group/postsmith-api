@@ -5,13 +5,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ContentsDto {
+public class ContentsRequestDto {
     private Integer blogId;
     private Integer postId;
     private Integer category;
     private String title;
     private String content;
-    private String postType = "POSTS"; // Default post type
+    private String postType; // Default post type
     private Boolean isTemp = false;
     private Boolean isPublic = true;
     

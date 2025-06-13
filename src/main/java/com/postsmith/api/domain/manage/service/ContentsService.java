@@ -1,6 +1,7 @@
 package com.postsmith.api.domain.manage.service;
 
-import com.postsmith.api.domain.manage.dto.ContentsDto;
+import com.postsmith.api.domain.manage.dto.ContentsRequestDto;
+import com.postsmith.api.domain.manage.dto.ContentsResponseDto;
 import com.postsmith.api.entity.BlogsEntity;
 import com.postsmith.api.entity.CategoriesEntity;
 import com.postsmith.api.entity.ContentsEntity;
@@ -21,7 +22,7 @@ public class ContentsService {
     private final CategoriesRepository categoriesRepository;
     
     @Transactional
-    public ContentsEntity createPost(BlogsEntity blog, ContentsDto dto) {
+    public ContentsResponseDto createPost(BlogsEntity blog, ContentsRequestDto dto) {
         try {
             // 카테고리 조회 (nullable)
             CategoriesEntity category = null;
@@ -60,7 +61,7 @@ public class ContentsService {
                     .build();
             
             // 생성 시간 설정 (Entity의 @PrePersist가 없다면 수동 설정)
-            ContentsEntity savedContent = contentsRepository.save(content);
+            ContentsResponseDto savedContent = contentsRepository.save(content).toDto();
             
             log.info("Content created successfully: blogId={}, sequence={}, title={}", 
                     blog.getId(), nextSequence, dto.getTitle());
@@ -74,20 +75,20 @@ public class ContentsService {
     }
     
     @Transactional(readOnly = true)
-    public List<ContentsEntity> getBlogContents(BlogsEntity blog) {
-        return contentsRepository.findByBlogOrderBySequenceDesc(blog);
+    public List<ContentsResponseDto> getBlogContents(BlogsEntity blog) {
+        return contentsRepository.findByBlogOrderBySequenceDesc(blog).stream().map(ContentsEntity::toDto).toList();
     }
     
     @Transactional(readOnly = true)
-    public List<ContentsEntity> getPublicBlogContents(BlogsEntity blog) {
-        return contentsRepository.findByBlogAndIsPublicTrueOrderBySequenceDesc(blog);
+    public List<ContentsResponseDto> getPublicBlogContents(BlogsEntity blog) {
+        return contentsRepository.findByBlogAndIsPublicTrueOrderBySequenceDesc(blog).stream().map(ContentsEntity::toDto).toList();
     }
     
     @Transactional(readOnly = true)
-    public ContentsEntity getContentBySequence(BlogsEntity blog, Integer sequence) {
+    public ContentsResponseDto getContentBySequence(BlogsEntity blog, Integer sequence) {
         return contentsRepository.findByBlogAndSequence(blog, sequence)
                 .orElseThrow(() -> new IllegalArgumentException(
-                    "Content not found: blogId=" + blog.getId() + ", sequence=" + sequence));
+                    "Content not found: blogId=" + blog.getId() + ", sequence=" + sequence)).toDto();
     }
     
     @Transactional(readOnly = true)
@@ -97,7 +98,7 @@ public class ContentsService {
     }
     
     @Transactional
-    public ContentsEntity updateContent(Integer contentId, ContentsDto dto) {
+    public ContentsResponseDto updateContent(Integer contentId, ContentsRequestDto dto) {
         ContentsEntity content = getContentById(contentId);
         
         // 카테고리 조회 및 업데이트 (nullable)
@@ -133,7 +134,7 @@ public class ContentsService {
         
         log.info("Content updated successfully: id={}, title={}", contentId, dto.getTitle());
         
-        return savedContent;
+        return savedContent.toDto();
     }
     
     @Transactional

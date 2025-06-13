@@ -1,7 +1,8 @@
 package com.postsmith.api.domain.manage.controller;
 
 import com.postsmith.api.domain.blog.BlogService;
-import com.postsmith.api.domain.manage.dto.ContentsDto;
+import com.postsmith.api.domain.manage.dto.ContentsRequestDto;
+import com.postsmith.api.domain.manage.dto.ContentsResponseDto;
 import com.postsmith.api.domain.manage.service.ContentsService;
 import com.postsmith.api.entity.BlogsEntity;
 import com.postsmith.api.entity.ContentsEntity;
@@ -15,18 +16,20 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/contents")
 @RequiredArgsConstructor
+@CrossOrigin(origins = {"http://localhost:3000", "http://*.localhost:3000"}, allowCredentials = "true")
+
 @Slf4j
 public class ContentsController {
     private final ContentsService contentsService;
     private final BlogService blogService;
     
     @PostMapping("/blog/{blogAddress}/create")
-    public ResponseEntity<?> createPost(
-            @RequestBody ContentsDto dto,
+    public ResponseEntity<?> createContents(
+            @RequestBody ContentsRequestDto dto,
             @PathVariable("blogAddress") String blogAddress) {
         try {
             BlogsEntity blog = blogService.findBlogByAddress(blogAddress);
-            ContentsEntity content = contentsService.createPost(blog, dto);
+            ContentsResponseDto content = contentsService.createPost(blog, dto);
             return ResponseEntity.ok(content);
         } catch (IllegalArgumentException e) {
             log.error("Blog not found: {}", blogAddress, e);
@@ -38,12 +41,12 @@ public class ContentsController {
     }
     
     @GetMapping("/blog/{blogAddress}")
-    public ResponseEntity<List<ContentsEntity>> getBlogContents(
+    public ResponseEntity<List<ContentsResponseDto>> getBlogContents(
             @PathVariable("blogAddress") String blogAddress,
             @RequestParam(defaultValue = "false") boolean publicOnly) {
         try {
             BlogsEntity blog = blogService.findBlogByAddress(blogAddress);
-            List<ContentsEntity> contents;
+            List<ContentsResponseDto> contents;
             
             if (publicOnly) {
                 contents = contentsService.getPublicBlogContents(blog);
@@ -62,12 +65,12 @@ public class ContentsController {
     }
     
     @GetMapping("/blog/{blogAddress}/{sequence}")
-    public ResponseEntity<ContentsEntity> getContentBySequence(
+    public ResponseEntity<?> getContentBySequence(
             @PathVariable("blogAddress") String blogAddress,
             @PathVariable("sequence") Integer sequence) {
         try {
             BlogsEntity blog = blogService.findBlogByAddress(blogAddress);
-            ContentsEntity content = contentsService.getContentBySequence(blog, sequence);
+            ContentsResponseDto content = contentsService.getContentBySequence(blog, sequence);
             return ResponseEntity.ok(content);
         } catch (IllegalArgumentException e) {
             log.error("Content not found: blog={}, sequence={}", blogAddress, sequence, e);
@@ -79,9 +82,9 @@ public class ContentsController {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<ContentsEntity> getContentById(@PathVariable("id") Integer id) {
+    public ResponseEntity<?> getContentById(@PathVariable("id") Integer id) {
         try {
-            ContentsEntity content = contentsService.getContentById(id);
+            ContentsResponseDto content = contentsService.getContentById(id).toDto();
             return ResponseEntity.ok(content);
         } catch (IllegalArgumentException e) {
             log.error("Content not found with id: {}", id, e);
@@ -95,9 +98,9 @@ public class ContentsController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateContent(
             @PathVariable("id") Integer id,
-            @RequestBody ContentsDto dto) {
+            @RequestBody ContentsRequestDto dto) {
         try {
-            ContentsEntity content = contentsService.updateContent(id, dto);
+            ContentsResponseDto content = contentsService.updateContent(id, dto);
             return ResponseEntity.ok(content);
         } catch (IllegalArgumentException e) {
             log.error("Content not found with id: {}", id, e);

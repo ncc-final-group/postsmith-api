@@ -3,6 +3,7 @@ package com.postsmith.api.entity;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.postsmith.api.domain.manage.dto.ContentsResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,8 +11,25 @@ import lombok.*;
 @Table(name = "contents")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ContentsEntity {
+	public ContentsResponseDto toDto() {
+		return ContentsResponseDto.builder()
+				.id(this.id)
+				.categoryId(this.category != null ? this.category.getId() : null)
+				.blogId(this.blog.getId())
+				.sequence(this.sequence)
+				.postType(this.type.name())
+				.title(this.title)
+				.contentHtml(this.contentHtml)
+				.contentPlain(this.contentPlain)
+				.isTemp(this.isTemp)
+				.isPublic(this.isPublic)
+				.likes(this.likes != null ? this.likes : 0)
+				.createdAt(this.createdAt)
+				.updatedAt(this.updatedAt)
+				.build();
+	}
+
 	public enum ContentEnum {
 		POSTS, PAGE, NOTICE
 	}
