@@ -1,6 +1,11 @@
 package com.postsmith.api.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -10,6 +15,8 @@ import com.postsmith.api.entity.ContentsEntity;
 
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.transaction.Transactional;
 
 @Repository
 public interface ContentsRepository extends JpaRepository<ContentsEntity, Integer> {
@@ -38,4 +45,23 @@ public interface ContentsRepository extends JpaRepository<ContentsEntity, Intege
     
     // 좋아요 순으로 콘텐츠 조회
     List<ContentsEntity> findByBlogAndIsPublicTrueOrderByLikesDesc(BlogsEntity blog);
+	
+	
+	
+	List<ContentsEntity> findByTypeAndBlogId(ContentsEntity.ContentEnum type, Long blogId);
+
+	
+	@Modifying
+    @Transactional
+    @Query("UPDATE ContentsEntity c SET c.isPublic = :isPublic WHERE c.id = :id")
+    void updateIsPublicById(@Param("id") Integer id, @Param("isPublic") Boolean isPublic);
+	
+	
+	@Modifying
+	@Transactional
+	@Query("UPDATE ContentsEntity c SET c.isPublic = :isPublic WHERE c.id IN :contentIds")
+	void updateIsPublicByIds(@Param("contentIds") List<Integer> contentIds, @Param("isPublic") Boolean isPublic);
+
+
+
 }
