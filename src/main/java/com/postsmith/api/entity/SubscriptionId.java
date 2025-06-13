@@ -15,12 +15,12 @@ public class SubscriptionId implements Serializable {
 	@Column(name = "subscriber_id", nullable = false)
 	private Integer subscriberId; // FK > users.id
 
-	@Column(name = "blogger_id", nullable = false)
-	private Integer bloggerId; // FK > users.id
+	@Column(name = "blog_id", nullable = false)
+	private Integer blogId; // FK > blog.id
 
 	@Builder
-	public SubscriptionId(Integer subscriberId, Integer bloggerId) {
+	public SubscriptionId(Integer subscriberId, Integer blogId) {
 		this.subscriberId = subscriberId;
-		this.bloggerId = bloggerId;
+		this.blogId = blogId;
 	}
 }
