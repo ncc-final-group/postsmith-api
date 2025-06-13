@@ -30,17 +30,21 @@ public class ThemesEntity {
 	@Column(name = "author_link", length = 255, nullable = false)
 	private String authorLink = ""; // 제작자 링크
 
-	@Column(name = "theme", columnDefinition = "TEXT")
-	private String theme; // 테마 내용
+	@Column(name = "html", columnDefinition = "TEXT")
+	private String html; // 테마 HTML 코드
+
+	@Column(name = "css", columnDefinition = "TEXT")
+	private String css; // 테마 CSS 코드
 	
 	@Builder
-	public ThemesEntity(String name, String coverImage, String image, String description, String author, String authorLink, String theme) {
+	public ThemesEntity(String name, String coverImage, String image, String description, String author, String authorLink, String html, String css) {
 		this.name = name;
 		this.coverImage = coverImage;
 		this.image = image;
 		this.description = description;
 		this.author = author;
 		this.authorLink = authorLink;
-		this.theme = theme;
+		this.html = html;
+		this.css = css;
 	}
 }
