@@ -24,25 +24,24 @@ public class MediaManageController {
     @GetMapping
     public ResponseEntity<Page<MediaDto>> getMediaFiles(
             @RequestParam(name = "userId") Integer userId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(required = false) String fileType,
             @RequestParam(required = false) String search) {
-        
-        Integer fixedBlogId = 1;
-        log.info("미디어 파일 목록 조회 요청: userId={} (무시됨), fixedBlogId={}, page={}, size={}, fileType={}, search={}", 
-                userId, fixedBlogId, page, size, fileType, search);
+
+        log.info("미디어 파일 목록 조회 요청: userId={} (무시됨), page={}, size={}, fileType={}, search={}",
+                userId, page, size, fileType, search);
         
         try {
             Pageable pageable = PageRequest.of(page, size);
             Page<MediaDto> mediaFiles;
             
             if (search != null && !search.trim().isEmpty()) {
-                mediaFiles = mediaService.searchMediaFiles(fixedBlogId, search.trim(), pageable);
+                mediaFiles = mediaService.searchMediaFiles(userId, search.trim(), pageable);
             } else if (fileType != null && !fileType.trim().isEmpty()) {
-                mediaFiles = mediaService.getBlogMediaFilesByType(fixedBlogId, fileType.trim(), pageable);
+                mediaFiles = mediaService.getBlogMediaFilesByType(userId, fileType.trim(), pageable);
             } else {
-                mediaFiles = mediaService.getBlogMediaFiles(fixedBlogId, pageable);
+                mediaFiles = mediaService.getBlogMediaFiles(userId, pageable);
             }
             
             log.info("미디어 파일 목록 조회 완료: 총 {}개 파일", mediaFiles.getTotalElements());
@@ -57,10 +56,7 @@ public class MediaManageController {
     public ResponseEntity<MediaDto> getMediaFile(
             @PathVariable Integer id,
             @RequestParam(name = "userId") Integer userId) {
-        
-        Integer fixedBlogId = 1;
-        log.info("미디어 파일 조회 요청: id={}, userId={} (무시됨), fixedBlogId={}", id, userId, fixedBlogId);
-        
+
         try {
             MediaDto mediaFile = mediaService.getMediaFile(id);
             log.info("미디어 파일 조회 완료: {}", mediaFile.getFilename());
@@ -76,10 +72,7 @@ public class MediaManageController {
             @PathVariable Integer id,
             @RequestBody MediaDto updateDto,
             @RequestParam(name = "userId") Integer userId) {
-        
-        Integer fixedBlogId = 1;
-        log.info("미디어 파일 수정 요청: id={}, userId={} (무시됨), fixedBlogId={}", id, userId, fixedBlogId);
-        
+
         try {
             MediaDto updatedMedia = mediaService.updateMediaFile(id, updateDto);
             log.info("미디어 파일 수정 완료: {}", updatedMedia.getFilename());
@@ -94,9 +87,8 @@ public class MediaManageController {
     public ResponseEntity<String> deleteMediaFile(
             @PathVariable Integer id,
             @RequestParam(name = "userId") Integer userId) {
-        
-        Integer fixedBlogId = 1;
-        log.info("미디어 파일 삭제 요청: id={}, userId={} (무시됨), fixedBlogId={}", id, userId, fixedBlogId);
+
+        log.info("미디어 파일 삭제 요청: id={}, userId={} (무시됨)", id, userId);
         
         try {
             mediaService.deleteMediaFile(id);
@@ -112,9 +104,8 @@ public class MediaManageController {
     public ResponseEntity<String> deleteMediaFiles(
             @RequestBody List<Integer> ids,
             @RequestParam(name = "userId") Integer userId) {
-        
-        Integer fixedBlogId = 1;
-        log.info("미디어 파일 일괄 삭제 요청: ids={}, userId={} (무시됨), fixedBlogId={}", ids, userId, fixedBlogId);
+
+        log.info("미디어 파일 일괄 삭제 요청: ids={}, userId={} (무시됨)", ids, userId);
         
         try {
             mediaService.deleteMediaFiles(ids);
@@ -129,14 +120,11 @@ public class MediaManageController {
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getMediaStats(
             @RequestParam(name = "userId") Integer userId) {
-        
-        Integer fixedBlogId = 1;
+
         log.info("=== 미디어 통계 조회 요청 시작 ===");
-        log.info("요청 파라미터 userId={} (무시됨), 실제 사용할 fixedBlogId={}", userId, fixedBlogId);
-        
         try {
             log.info("MediaService.getBlogMediaStats 호출 중...");
-            Map<String, Object> stats = mediaService.getBlogMediaStats(fixedBlogId);
+            Map<String, Object> stats = mediaService.getBlogMediaStats(userId);
             log.info("MediaService.getBlogMediaStats 호출 완료: {}", stats);
             log.info("=== 미디어 통계 조회 성공 ===");
             return ResponseEntity.ok(stats);

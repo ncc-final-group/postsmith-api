@@ -35,10 +35,10 @@ public class FileUploadService {
     @Value("${ncp.object-storage.secret-key}")
     private String secretKey;
 
-    @Value("${ncp.object-storage.endpoint:https://kr.object.ncloudstorage.com}")
+    @Value("${ncp.object-storage.endpoint}")
     private String endpoint;
 
-    @Value("${ncp.object-storage.base-url:https://kr.object.ncloudstorage.com/postsmith-bucket}")
+    @Value("${ncp.object-storage.base-url}")
     private String baseUrl;
 
     private S3Client getS3Client() {
