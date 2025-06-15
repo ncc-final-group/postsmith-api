@@ -43,6 +43,10 @@ public class CategoryService {
         if (dto.getCategoryId() != null) {
             parentCategory = categoryRepository.findById(dto.getCategoryId())
                     .orElseThrow(() -> new RuntimeException("Parent category not found with ID: " + dto.getCategoryId()));
+
+            if (parentCategory.getCategory() != null) {
+                throw new RuntimeException("2단계 카테고리 아래에는 더 이상 하위 카테고리를 만들 수 없습니다.");
+            }
         }
 
         Integer sequence = dto.getSequence() != null ? dto.getSequence() : 0;
@@ -92,21 +96,28 @@ public class CategoryService {
             dtoMap.put(entity.getId(), dto);
         }
 
-        // 트리 구성
+        // 루트 카테고리와 서브카테고리 분리
+        List<CategoryDto> rootCategories = new ArrayList<>();
+        List<CategoryDto> subCategories = new ArrayList<>();
+
         for (CategoriesEntity entity : allEntities) {
             CategoryDto dto = dtoMap.get(entity.getId());
             if (entity.getCategory() == null) {
-                // 루트 카테고리
-                roots.add(dto);
+                rootCategories.add(dto);
             } else {
-                CategoryDto parentDto = dtoMap.get(entity.getCategory().getId());
-                if (parentDto != null) {
-                    parentDto.getChildren().add(dto);
-                }
+                subCategories.add(dto);
             }
         }
 
-        return roots;
+        // 서브카테고리를 부모에 연결
+        for (CategoryDto subDto : subCategories) {
+            CategoryDto parentDto = dtoMap.get(subDto.getCategoryId());
+            if (parentDto != null) {
+                parentDto.getChildren().add(subDto);
+            }
+        }
+
+        return rootCategories;
     }
 
 
@@ -239,16 +250,6 @@ public class CategoryService {
         }
     }
 
-    private boolean isDescendantOf(CategoriesEntity maybeChild, CategoriesEntity maybeParent, List<CategoriesEntity> all) {
-        if (maybeChild == null || maybeParent == null) return false;
-        CategoriesEntity current = maybeChild.getCategory();
-        while (current != null) {
-            if (current.getId().equals(maybeParent.getId())) return true;
-            current = findCategoryById(current.getId(), all).getCategory();
-        }
-        return false;
-    }
-
 
     //카테고리 이동
     @Transactional
@@ -261,20 +262,34 @@ public class CategoryService {
         if (drag == null) throw new RuntimeException("Drag 대상 없음");
         if (targetId != 0 && target == null) throw new RuntimeException("Target 대상 없음");
 
-        // 🔒 순환 참조 방지
-        if (isDescendantOf(target, drag, all)) {
-            throw new RuntimeException("자기 자식 카테고리 아래로 이동 불가");
+        // 🔒 2단계 카테고리 아래로 이동 제한
+        if (target != null && target.getCategory() != null) {
+            throw new RuntimeException("2단계 카테고리 아래로는 이동할 수 없습니다.");
         }
 
-        // 이동할 전체 서브트리 수집
-        List<CategoriesEntity> subtree = findSubtreeCategories(drag, all);
+        // 시퀀스 조정
+        List<CategoriesEntity> siblings;
+        if (drag.getCategory() == null) {
+            siblings = all.stream()
+                    .filter(c -> c.getCategory() == null && !c.getId().equals(drag.getId()))
+                    .collect(Collectors.toList());
+        } else {
+            siblings = all.stream()
+                    .filter(c -> c.getCategory() != null &&
+                            c.getCategory().getId().equals(drag.getCategory().getId()) &&
+                            !c.getId().equals(drag.getId()))
+                    .collect(Collectors.toList());
+        }
 
-        // 기존 위치에서 제거 → 시퀀스 감소
-        removeCategoriesFromParentSequence(subtree, all);
+        siblings.forEach(s -> {
+            if (s.getSequence() > drag.getSequence()) {
+                s.changeSequence(s.getSequence() - 1);
+            }
+        });
 
-        // 새 위치 설정
+        // 이동 처리
         if (target == null) {
-            // 루트로 승격
+            // 루트로 이동
             drag.changeCategory(null);
             int maxSeq = all.stream()
                     .filter(c -> c.getCategory() == null)
@@ -283,20 +298,21 @@ public class CategoryService {
                     .orElse(-1);
             drag.changeSequence(maxSeq + 1);
         } else {
-            // 일반 이동 (target의 부모로 이동)
-            CategoriesEntity newParent = target.getCategory();
-            drag.changeCategory(newParent);
+            // target과 같은 부모에 위치하도록 이동
+            drag.changeCategory(target.getCategory()); // target 자체로 이동 X, 같은 부모로 이동
             drag.changeSequence(target.getSequence());
 
-            // 기존 형제들 시퀀스 +1
+            // target 이후 형제들 시퀀스 증가
             List<CategoriesEntity> newSiblings = findLaterSiblings(target, all);
-            newSiblings.forEach(s -> s.changeSequence(s.getSequence() + subtree.size()));
+            newSiblings.forEach(s -> s.changeSequence(s.getSequence() + 1));
             categoryRepository.saveAll(newSiblings);
         }
 
-        categoryRepository.saveAll(subtree);
+        categoryRepository.save(drag);
+        categoryRepository.saveAll(siblings);
         return drag;
     }
+
 
 
     private CategoriesEntity findCategoryById(int id, List<CategoriesEntity> allCategories) {
@@ -306,19 +322,7 @@ public class CategoryService {
                 .orElse(null);
     }
 
-    private List<CategoriesEntity> findSubtreeCategories(CategoriesEntity root, List<CategoriesEntity> allCategories) {
-        List<CategoriesEntity> subtree = new ArrayList<>();
-        collectSubtree(root, allCategories, subtree);
-        return subtree;
-    }
 
-    private void collectSubtree(CategoriesEntity node, List<CategoriesEntity> allCategories, List<CategoriesEntity> collector) {
-        collector.add(node);
-        List<CategoriesEntity> children = findChildCategories(node, allCategories);
-        for (CategoriesEntity child : children) {
-            collectSubtree(child, allCategories, collector);
-        }
-    }
 
     private void removeCategoriesFromParentSequence(List<CategoriesEntity> subtree, List<CategoriesEntity> allCategories) {
         // subtree 중 최상위 노드 시퀀스 기준으로 동일 레벨에서 시퀀스 - subtree.size() 적용
@@ -368,6 +372,4 @@ public class CategoryService {
 
         categoryRepository.saveAll(entitiesToSave);
     }
-
-
 }
