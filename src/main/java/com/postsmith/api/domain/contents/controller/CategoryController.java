@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CategoryController {
 
-    private final CategoryService categoryService;
+    private final CategoryService categoriesService;
 
     private CategoryDto entityToDto(CategoriesEntity entity) {
         if (entity == null) return null;
@@ -33,53 +33,18 @@ public class CategoryController {
         return dto;
     }
 
-    // 카테고리 생성
-    @PostMapping
-    public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto dto) {
-        CategoriesEntity saved = categoryService.createCategory(dto);
-        return ResponseEntity.ok(entityToDto(saved));
-    }
 
-    // 로그인 유저 기준 카테고리 트리 조회
+
     @GetMapping("/tree")
     public ResponseEntity<List<CategoryDto>> getCategoryTree() {
-        List<CategoryDto> tree = categoryService.getCategoryTreeForCurrentUser();
+        List<CategoryDto> tree = categoriesService.getCategoryTreeForCurrentUser();
         return ResponseEntity.ok(tree);
     }
 
-    // 카테고리 삭제
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable int id) {
-        categoryService.deleteCategory(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    // 카테고리 업데이트
-    @PutMapping("/{id}")
-    public ResponseEntity<CategoryDto> updateCategory(@PathVariable int id, @RequestBody CategoryDto dto) {
-        CategoriesEntity updated = categoryService.updateCategory(id, dto);
-        return ResponseEntity.ok(entityToDto(updated));
-    }
-
-    // 카테고리 순서 재정렬
-    @PutMapping("/reorder")
-    public ResponseEntity<Void> reorderCategories(@RequestBody List<CategoryDto> ordered) {
-        categoryService.reorderCategories(ordered);
-        return ResponseEntity.ok().build();
-    }
-
-    // 카테고리 이동
-    @PutMapping("/{id}/move")
-    public ResponseEntity<CategoryDto> moveCategory(@PathVariable int id,
-                                                    @RequestParam(required = false) Integer targetId) {
-        CategoriesEntity moved = categoryService.moveCategory(id, targetId);
-        return ResponseEntity.ok(entityToDto(moved));
-    }
-
-    // 전체 카테고리 일괄 저장 (변경사항 반영)
+    // 필요시 유지
     @PutMapping
     public ResponseEntity<Void> saveAllCategories(@RequestBody List<CategoryDto> updatedCategories) {
-        categoryService.saveAllCategories(updatedCategories);
+        categoriesService.saveAllCategories(updatedCategories);
         return ResponseEntity.ok().build();
     }
 }
