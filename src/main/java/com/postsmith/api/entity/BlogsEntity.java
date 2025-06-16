@@ -48,4 +48,8 @@ public class BlogsEntity {
 		this.description = description;
 		this.logoImage = logoImage;
 	}
+
+	public BlogsEntity(Integer id) {
+		this.id = id;
+	}
 }
