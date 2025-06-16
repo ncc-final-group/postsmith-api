@@ -24,4 +24,10 @@ public class CategoryDto {
     private Integer sequence;
     private String description;
     private List<CategoryDto> children = new ArrayList<>();
+
+    public CategoryDto(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
 }
