@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api1/upload")
+@RequestMapping("/api/upload")
 @RequiredArgsConstructor
 @Slf4j
 public class FileUploadController {

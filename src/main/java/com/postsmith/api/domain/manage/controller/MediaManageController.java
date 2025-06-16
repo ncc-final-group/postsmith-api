@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api1/media")
+@RequestMapping("/api/media")
 @RequiredArgsConstructor
 @Slf4j
 public class MediaManageController {
