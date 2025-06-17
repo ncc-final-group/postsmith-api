@@ -1,7 +1,8 @@
-package com.postsmith.api.controller;
+package com.postsmith.api.theme.controller;
 
-import com.postsmith.api.dto.UsersDto;
-import com.postsmith.api.service.UsersService;
+import com.postsmith.api.theme.dto.UsersDto;
+import com.postsmith.api.theme.service.UsersService;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;

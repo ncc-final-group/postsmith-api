@@ -1,4 +1,4 @@
-package com.postsmith.api.dto;
+package com.postsmith.api.theme.dto;
 
 import java.time.LocalDateTime;
 
@@ -43,8 +43,6 @@ public class BlogsDto {
                 .address(this.address)
                 .description(this.description)
                 .logoImage(this.logoImage)
-                .createdAt(this.createdAt)
-                .updatedAt(this.updatedAt)
                 .build();
     }
 }

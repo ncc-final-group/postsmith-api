@@ -1,8 +1,9 @@
-package com.postsmith.api.service;
+package com.postsmith.api.theme.service;
 
-import com.postsmith.api.dto.BlogsDto;
+
 import com.postsmith.api.entity.BlogsEntity;
 import com.postsmith.api.repository.BlogsRepository;
+import com.postsmith.api.theme.dto.BlogsDto;
 
 import lombok.RequiredArgsConstructor;
 

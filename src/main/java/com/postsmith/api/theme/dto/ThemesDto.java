@@ -1,4 +1,4 @@
-package com.postsmith.api.dto;
+package com.postsmith.api.theme.dto;
 
 import com.postsmith.api.entity.ThemesEntity;
 import lombok.*;

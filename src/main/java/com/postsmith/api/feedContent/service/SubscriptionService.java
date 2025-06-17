@@ -1,11 +1,15 @@
-package com.postsmith.api.service;
+package com.postsmith.api.feedContent.service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.postsmith.api.dto.SubscriptionDto;
 import com.postsmith.api.entity.*;
+import com.postsmith.api.feedContent.dto.SubscriptionDto;
 import com.postsmith.api.repository.*;
+import com.postsmith.api.theme.dto.BlogsDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +27,7 @@ public class SubscriptionService {
             .orElseThrow(() -> new IllegalArgumentException("Subscriber not found"));
 
         BlogsEntity blog = blogsRepository.findById(request.getBlogId())
-            .orElseThrow(() -> new IllegalArgumentException("Blogger not found"));
+            .orElseThrow(() -> new IllegalArgumentException("Blogs not found"));
 
         SubscriptionId id = new SubscriptionId(subscriber.getId(), blog.getId());
 
@@ -37,6 +41,24 @@ public class SubscriptionService {
             .build();
 
         subscriptionRepository.save(subscription);
+    }
+    
+    // 추천 구독 블로그
+    public List<BlogsDto> findrecommendedBlogs(Integer userId) {
+        List<BlogsEntity> blogs = blogsRepository.findrecommendedBlogs(userId);
+        System.out.print(blogs);
+        return blogs.stream()
+                .map(BlogsDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    // 구독
+    public void subscribeBlog(Integer subscriberId, Integer blogId) {
+        int inserted = blogsRepository.insertSubscription(subscriberId, blogId);
+
+        if (inserted == 0) {
+            throw new RuntimeException("해당 블로그가 존재하지 않습니다.");
+        }
     }
 
 }
