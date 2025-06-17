@@ -42,4 +42,14 @@ public class RepliesEntity {
         this.parentReply = parentReply;
         this.contentText = contentText;
     }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // deletedAt 설정을 위한 메서드 추가
+    public void markAsDeleted() {
+        this.deletedAt = LocalDateTime.now();
+    }
 }
