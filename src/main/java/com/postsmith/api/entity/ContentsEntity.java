@@ -2,7 +2,6 @@ package com.postsmith.api.entity;
 
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.postsmith.api.domain.manage.dto.ContentsResponseDto;
 import jakarta.persistence.*;
 import lombok.*;

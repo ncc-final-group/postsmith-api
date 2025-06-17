@@ -59,7 +59,7 @@ public class PostsService {
                 CategoriesEntity current = category;
                 while (current != null) {
                     pathParts.add(current.getName());
-                    current = current.getCategory();
+                    current = current.getParent();
                 }
                 Collections.reverse(pathParts);
                 dto.setCategoryPath(String.join("/", pathParts));

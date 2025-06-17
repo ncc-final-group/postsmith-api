@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.postsmith.api.content.dto.RepliesManageDto;
@@ -17,10 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 
-
 @RestController
-@RequestMapping("/api/Replies")
-@CrossOrigin(origins = "*") 
+@RequestMapping("/api/replies")
 public class RepliesManageController {
 
     private final RepliesManageService repliesManageService;
@@ -30,9 +29,10 @@ public class RepliesManageController {
     }
 
     @GetMapping
-    public List<RepliesManageDto> getReplies() {
-        return repliesManageService.getReplies();
+    public List<RepliesManageDto> getReplies(@RequestParam("blogId") Long blogId) {
+        return repliesManageService.getRepliesByBlogId(blogId);
     }
+
     
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteContent(@PathVariable("id") Integer id) {
