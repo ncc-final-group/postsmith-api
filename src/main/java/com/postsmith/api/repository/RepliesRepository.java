@@ -32,6 +32,8 @@ public interface RepliesRepository extends JpaRepository<RepliesEntity, Integer>
         LocalDateTime endDate
     );
 
+    List<RepliesEntity> findByContentBlogId(Long blogId);
+    
 	 @Query("SELECT COUNT(r) FROM RepliesEntity r WHERE r.content.id = :contentId")
 	    int findTotalRepliesByContentId(@Param("contentId") Integer contentId);
 }
