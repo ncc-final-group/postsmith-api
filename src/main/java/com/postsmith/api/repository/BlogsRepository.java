@@ -6,12 +6,21 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.postsmith.api.entity.BlogsEntity;
+import com.postsmith.api.entity.UsersEntity;
+
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BlogsRepository extends JpaRepository<BlogsEntity, Integer> {
 	
-	// userId로 운영중인 블로그 정보
-	List<BlogsEntity> findAllByUser_Id(Integer userId);
+    boolean existsByAddress(String address);
+    Optional<BlogsEntity> findByAddress(String address);
+    List<BlogsEntity> findByUserOrderByCreatedAtDesc(UsersEntity user);
+    Long countByUser(UsersEntity user);
+
+    // userId로 운영중인 블로그 정보
+    List<BlogsEntity> findAllByUser_Id(Integer userId);
     
     @Modifying
     @Transactional
@@ -48,4 +57,5 @@ public interface BlogsRepository extends JpaRepository<BlogsEntity, Integer> {
         VALUES (:subscriberId, :blogId)
     """, nativeQuery = true)
     int insertSubscription(@Param("subscriberId") Integer subscriberId, @Param("blogId") Integer blogId);
+
 }

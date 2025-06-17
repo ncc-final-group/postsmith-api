@@ -10,26 +10,34 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SubscriptionEntity {
-	@EmbeddedId
-	private SubscriptionId id;
 
-	@MapsId("subscriberId")
-	@ManyToOne
-	@JoinColumn(name = "subscriber_id", nullable = false, referencedColumnName = "id")
-	private UsersEntity subscriber; // 구독자 아이디: FK > users.id
+    @EmbeddedId
+    private SubscriptionId id;
 
-	@MapsId("blogId")
-	@ManyToOne
-	@JoinColumn(name = "blog_id", nullable = false, referencedColumnName = "id")
-	private BlogsEntity blog; // 구독 대상 아이디: FK > blog.id
+    /** 구독자 (users.id) */
+    @MapsId("subscriberId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscriber_id", nullable = false, referencedColumnName = "id")
+    private UsersEntity subscriber;
 
-	@Column(name = "created_at")
-	private LocalDateTime createdAt;
+    /** 구독 대상 블로그 (blogs.id) */
+    @MapsId("blogId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "blog_id", nullable = false, referencedColumnName = "id")
+    private BlogsEntity blog;
 
-	@Builder
-	public SubscriptionEntity(UsersEntity subscriber, BlogsEntity blog) {
-		this.id = SubscriptionId.builder().subscriberId(subscriber.getId()).blogId(blog.getId()).build();
-		this.subscriber = subscriber;
-		this.blog = blog;
-	}
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    // 편의 생성자: builder 사용 시 createdAt 자동 세팅
+    @Builder
+    public SubscriptionEntity(UsersEntity subscriber, BlogsEntity blog) {
+        this.subscriber = subscriber;
+        this.blog       = blog;
+        this.id         = SubscriptionId.builder()
+                              .subscriberId(subscriber.getId())
+                              .blogId(blog.getId())
+                              .build();
+        this.createdAt  = LocalDateTime.now();
+    }
 }
