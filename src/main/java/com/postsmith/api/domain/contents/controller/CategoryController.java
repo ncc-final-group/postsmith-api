@@ -29,7 +29,7 @@ public class CategoryController {
         if (entity.getBlog() != null) {
             dto.setBlogId(entity.getBlog().getId());
         }
-        dto.setCategoryId(entity.getCategory() != null ? entity.getCategory().getId() : null);
+        dto.setParentId(entity.getParent() != null ? entity.getParent().getId() : null);
         return dto;
     }
 
@@ -47,4 +47,6 @@ public class CategoryController {
         categoriesService.saveAllCategories(updatedCategories);
         return ResponseEntity.ok().build();
     }
+
+    
 }

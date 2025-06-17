@@ -1,4 +1,3 @@
-/*
  package com.postsmith.api.entity;
 
 import java.time.LocalDateTime;
@@ -15,15 +14,21 @@ public class MediaEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "blog_id", nullable = false, referencedColumnName = "id")
 	private BlogsEntity blog; // FK > blogs.id
 
 	@Column(name = "uri", length = 255, nullable = false)
 	private String uri; // Storage URI
 
-	@Column(name = "filename", length = 255)
+	@Column(name = "name", length = 255)
 	private String filename; // 표시할 파일 이름
+
+	@Column(name = "type", length = 50)
+	private String fileType; // 파일 타입 (예: image/jpeg, image/png 등)
+
+	@Column(name = "size")
+	private Integer fileSize; // 파일 크기 (바이트 단위)
 
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
@@ -35,4 +40,3 @@ public class MediaEntity {
 		this.filename = filename;
 	}
 }
-*/

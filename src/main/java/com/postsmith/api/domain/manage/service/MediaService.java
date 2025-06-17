@@ -1,13 +1,16 @@
-package com.postsmith.api.repository;
+/*
+package com.postsmith.api.domain.manage.service;
 
 import com.postsmith.api.entity.BlogsEntity;
 import com.postsmith.api.entity.MediaEntity;
+import com.postsmith.api.repository.MediaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,8 +29,8 @@ public interface MediaRepository extends JpaRepository<MediaEntity, Integer> {
             "LOWER(m.filename) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "ORDER BY m.createdAt DESC")
     Page<MediaEntity> searchByBlogAndKeyword(@Param("blog") BlogsEntity blog,
-                                           @Param("keyword") String keyword,
-                                           Pageable pageable);
+                                             @Param("keyword") String keyword,
+                                             Pageable pageable);
 
     // URI로 중복 확인
     boolean existsByUri(String uri);
@@ -46,4 +49,4 @@ public interface MediaRepository extends JpaRepository<MediaEntity, Integer> {
     // 날짜 범위로 조회
     Page<MediaEntity> findByBlogAndCreatedAtBetweenOrderByCreatedAtDesc(
             BlogsEntity blog, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
-}
+}*/

@@ -17,9 +17,8 @@ public class CategoryDto {
     
     @JsonProperty("blog")
     private Integer blogId;
-    
-    @JsonProperty("category")
-    private Integer categoryId;
+
+    private Integer parentId;
     
     private Integer sequence;
     private String description;
@@ -29,5 +28,7 @@ public class CategoryDto {
         this.id = id;
         this.name = name;
     }
+
+
 
 }
