@@ -92,6 +92,12 @@ public class CategoryService {
             return;
         }
 
+        for (CategoryDto dto : updatedCategories) {
+            System.out.println("DTO id: " + dto.getId() + ", parentId: " + dto.getParentId() + ", blogId: " + dto.getBlogId()
+                    + ", name: " + dto.getName()+ ", sequence: " + dto.getSequence()+ ", description: " + dto.getDescription());
+        }
+
+
         BlogsEntity blog = blogsRepository.findById(updatedCategories.get(0).getBlogId())
                 .orElseThrow(() -> new RuntimeException("블로그가 존재하지 않습니다"));
 
@@ -102,6 +108,7 @@ public class CategoryService {
         // 삭제할 것 찾기
         Set<Integer> updatedIds = updatedCategories.stream()
                 .map(CategoryDto::getId)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
         List<CategoriesEntity> toDelete = existingMap.values().stream()
@@ -116,7 +123,7 @@ public class CategoryService {
         // 1단계: Entity 생성 (parent 없이)
         for (CategoryDto dto : updatedCategories) {
             CategoriesEntity entity;
-            boolean isNew = dto.getId() < 0;
+            boolean isNew = dto.getId() == null || dto.getId() < 0;
 
             if (!isNew && existingMap.containsKey(dto.getId())) {
                 entity = existingMap.get(dto.getId());
@@ -142,8 +149,21 @@ public class CategoryService {
         // 2단계: 부모 설정
         for (CategoryDto dto : updatedCategories) {
             CategoriesEntity entity = tempMap.get(dto.getId());
-            CategoriesEntity parent = dto.getParentId() == null ? null : tempMap.get(dto.getParentId());
+
+            CategoriesEntity parent = null;
+            Integer parentId = dto.getParentId();
+
+            if (parentId != null) {
+                parent = tempMap.get(parentId);
+                if (parent == null) {
+                    parent = existingMap.get(parentId); // 기존 DB용
+                }
+            }
+
             entity.changeCategory(parent);
+        }
+        if (updatedCategories.get(0).getBlogId() == null) {
+            throw new IllegalArgumentException("blogId가 null입니다. 클라이언트에서 blogId를 포함해야 합니다.");
         }
 
         // 부모 설정 후 재저장
