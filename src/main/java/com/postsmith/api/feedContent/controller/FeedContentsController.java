@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
 @RestController
-@RequestMapping("/api/contents")
+@RequestMapping("/api/feedContents")
 @RequiredArgsConstructor
 public class FeedContentsController {
 
