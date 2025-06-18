@@ -1,5 +1,7 @@
 package com.postsmith.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.postsmith.api.domain.manage.dto.ThemesDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,6 +9,7 @@ import lombok.*;
 @Table(name = "themes")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ThemesEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,5 +49,15 @@ public class ThemesEntity {
 		this.authorLink = authorLink;
 		this.html = html;
 		this.css = css;
+	}
+	public ThemesDto toDto() {
+		return ThemesDto.builder()
+				.id(this.id)
+				.name(this.name)
+				.description(this.description)
+				.thumbnailImage(this.coverImage)
+				.themeHtml(this.html)
+				.themeCss(this.css)
+				.build();
 	}
 }

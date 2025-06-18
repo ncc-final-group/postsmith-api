@@ -31,10 +31,10 @@ public class BlogController {
     }
 
     @GetMapping("/address/{address}")
-    public ResponseEntity<BlogsEntity> getBlogByAddress(@PathVariable String address) {
+    public ResponseEntity<BlogDto> getBlogByAddress(@PathVariable String address) {
         try {
             BlogsEntity blog = blogService.findBlogByAddress(address);
-            return ResponseEntity.ok(blog);
+            return ResponseEntity.ok(blog.toDto());
         } catch (IllegalArgumentException e) {
             log.error("Blog not found: {}", address, e);
             return ResponseEntity.notFound().build();
@@ -45,10 +45,10 @@ public class BlogController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BlogsEntity> getBlogById(@PathVariable Integer id) {
+    public ResponseEntity<BlogDto> getBlogById(@PathVariable Integer id) {
         try {
             BlogsEntity blog = blogService.findBlogById(id);
-            return ResponseEntity.ok(blog);
+            return ResponseEntity.ok(blog.toDto());
         } catch (IllegalArgumentException e) {
             log.error("Blog not found with id: {}", id, e);
             return ResponseEntity.notFound().build();
@@ -72,10 +72,11 @@ public class BlogController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<BlogsEntity>> getUserBlogs(@PathVariable Integer userId) {
+    public ResponseEntity<List<BlogDto>> getUserBlogs(@PathVariable Integer userId) {
         try {
             List<BlogsEntity> blogs = blogService.findBlogsByUserId(userId);
-            return ResponseEntity.ok(blogs);
+            List<BlogDto> blogDtos = blogs.stream().map(BlogsEntity::toDto).toList();
+            return ResponseEntity.ok(blogDtos);
         } catch (Exception e) {
             log.error("Error getting user blogs: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
@@ -107,6 +108,17 @@ public class BlogController {
         } catch (Exception e) {
             log.error("Error deleting blog: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().body("Error deleting blog: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/update-theme/{blogId}/{themeId}")
+    public ResponseEntity<String> updateTheme(@PathVariable Integer blogId, @PathVariable Integer themeId) {
+        try {
+            blogService.updateTheme(blogId, themeId);
+            return ResponseEntity.ok("Theme updated successfully");
+        } catch (Exception e) {
+            log.error("Error updating theme: blogId={}, themeId={}, error={}", blogId, themeId, e.getMessage());
+            return ResponseEntity.badRequest().body("Error updating theme: " + e.getMessage());
         }
     }
 }

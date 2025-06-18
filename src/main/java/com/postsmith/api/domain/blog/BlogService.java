@@ -1,8 +1,10 @@
 package com.postsmith.api.domain.blog;
 
 import com.postsmith.api.entity.BlogsEntity;
+import com.postsmith.api.entity.ThemesEntity;
 import com.postsmith.api.entity.UsersEntity;
 import com.postsmith.api.repository.BlogsRepository;
+import com.postsmith.api.repository.ThemesRepository;
 import com.postsmith.api.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +19,7 @@ import java.util.List;
 public class BlogService {
     private final BlogsRepository blogsRepository;
     private final UsersRepository usersRepository;
-    
+    private final ThemesRepository themesRepository;
     @Transactional
     public String createBlog(BlogDto blogDto) {
         log.info("Creating blog: {}", blogDto);
@@ -79,14 +81,18 @@ public class BlogService {
                 blogsRepository.existsByAddress(blogDto.getAddress())) {
                 return "Blog URL already exists";
             }
-            
+            ThemesEntity theme = themesRepository.findById(blogDto.getThemeId())
+                    .orElseThrow(() -> new IllegalArgumentException("Theme not found with ID: " + blogDto.getThemeId()));
             // 블로그 정보 업데이트
             blog.updateBlogInfo(
                 blogDto.getName(),
                 blogDto.getNickname(),
                 blogDto.getAddress(),
                 blogDto.getDescription(),
-                blogDto.getLogoImage()
+                blogDto.getLogoImage(),
+                theme,
+                blogDto.getThemeHtml(),
+                blogDto.getThemeCss()
             );
             
             BlogsEntity updatedBlog = blogsRepository.save(blog);
@@ -126,5 +132,26 @@ public class BlogService {
         UsersEntity user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
         return blogsRepository.countByUser(user);
+    }
+    
+    @Transactional
+    public void updateTheme(Integer blogId, Integer themeId) {
+        blogsRepository.findById(blogId).ifPresent(blog -> {
+            ThemesEntity theme = themesRepository.findById(themeId).orElse(null);
+            if (theme != null) {
+                blog.updateBlogInfo(
+                    blog.getName(),
+                    blog.getNickname(),
+                    blog.getAddress(),
+                    blog.getDescription(),
+                    blog.getLogoImage(),
+                    theme,
+                    theme.getHtml(),
+                    theme.getCss()
+                );
+                blogsRepository.save(blog);
+                log.info("Blog theme updated successfully: blogId={}, themeId={}", blogId, themeId);
+            }
+        });
     }
 }

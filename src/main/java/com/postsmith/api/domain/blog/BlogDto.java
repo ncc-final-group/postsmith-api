@@ -1,12 +1,15 @@
 package com.postsmith.api.domain.blog;
 
 import com.postsmith.api.entity.BlogsEntity;
+import com.postsmith.api.entity.ThemesEntity;
 import com.postsmith.api.entity.UsersEntity;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 public class BlogDto {
     private Integer id;
     private Integer userId;
@@ -15,6 +18,9 @@ public class BlogDto {
     private String address;
     private String description;
     private String logoImage;
+    private String themeHtml;
+    private String themeCss;
+    private Integer themeId;
 
     public BlogsEntity toEntity(UsersEntity user) {
         return BlogsEntity.builder()
@@ -24,6 +30,8 @@ public class BlogDto {
                 .address(this.address)
                 .description(this.description)
                 .logoImage(this.logoImage != null ? this.logoImage : "default-logo.png")
+                .themeHtml(this.themeHtml)
+                .themeCss(this.themeCss)
                 .build();
     }
 
@@ -38,5 +46,10 @@ public class BlogDto {
                 ", description='" + description + '\'' +
                 ", logoImage='" + logoImage + '\'' +
                 '}';
+    }
+    public void setTheme(Integer themeId, String themeHtml, String themeCss) {
+        this.themeId = themeId;
+        this.themeHtml = themeHtml;
+        this.themeCss = themeCss;
     }
 } 

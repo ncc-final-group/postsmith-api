@@ -5,6 +5,10 @@ import org.springframework.stereotype.Repository;
 
 import com.postsmith.api.entity.ThemesEntity;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 @Repository
 public interface ThemesRepository extends JpaRepository<ThemesEntity, Integer> {
+    Optional<ThemesEntity> findById(Integer id);
 }
