@@ -11,9 +11,9 @@ import com.postsmith.api.entity.ThemeTagsId;
 
 @Repository
 public interface ThemeTagsRepository extends JpaRepository<ThemeTagsEntity, ThemeTagsId> {
-    @Query("""
-        SELECT tte.theme, tte.tag
-        FROM ThemeTagsEntity tte
-    """)
-    List<Object[]> findThemeTagsOrderByThemeCreatedAtDesc();
+	@Query("""
+			    SELECT tte.theme, tte.tag
+			    FROM ThemeTagsEntity tte
+			""")
+	List<Object[]> findThemeTagsOrderByThemeCreatedAtDesc();
 }

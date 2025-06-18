@@ -10,4 +10,3 @@ import com.postsmith.api.entity.SubscriptionId;
 @Repository
 public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity, SubscriptionId> {
 }
-

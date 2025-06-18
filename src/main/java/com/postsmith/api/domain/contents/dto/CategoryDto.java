@@ -12,23 +12,21 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 public class CategoryDto {
-    private Integer id;
-    private String name;
-    
-    @JsonProperty("blog")
-    private Integer blogId;
+	private Integer id;
+	private String name;
 
-    private Integer parentId;
-    
-    private Integer sequence;
-    private String description;
-    private List<CategoryDto> children = new ArrayList<>();
+	@JsonProperty("blog")
+	private Integer blogId;
 
-    public CategoryDto(Integer id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+	private Integer parentId;
 
+	private Integer sequence;
+	private String description;
+	private List<CategoryDto> children = new ArrayList<>();
 
+	public CategoryDto(Integer id, String name) {
+		this.id = id;
+		this.name = name;
+	}
 
 }

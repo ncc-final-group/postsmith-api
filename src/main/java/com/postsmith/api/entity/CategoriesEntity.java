@@ -1,6 +1,5 @@
 package com.postsmith.api.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,30 +29,13 @@ public class CategoriesEntity {
 	@Column(name = "description", columnDefinition = "TEXT")
 	private String description; // 카테고리 설명
 
-	// 시퀀스 변경을 위한 비즈니스 메서드
-	public void changeSequence(Integer sequence) {
-		this.sequence = sequence;
-	}
-
-	// 카테고리 이동을 위한 비즈니스 메서드
-	public void changeCategory(CategoriesEntity parent) {
-		this.parent = parent;
-	}
-
 	@Builder
-	public CategoriesEntity(BlogsEntity blog, CategoriesEntity parent, Integer sequence, String name, String description) {
-		if (blog == null) {
-			throw new IllegalArgumentException("Blog must not be null");
-		}
+	public CategoriesEntity(BlogsEntity blog, CategoriesEntity category, String name, Integer sequence, String description) {
 		this.blog = blog;
-		this.parent = parent;
+		this.parent = category;
 		this.sequence = sequence;
 		this.name = name;
+		this.sequence = sequence;
 		this.description = description;
 	}
-
-	public void changeName(String name) {this.name = name;}
-	public void changeDescription(String description) {this.description = description;}
-
-
 }

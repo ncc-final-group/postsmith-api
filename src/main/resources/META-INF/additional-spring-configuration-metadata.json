@@ -1,5 +1,37 @@
-{"properties": [{
-  "name": "ncp.object-storage.bucket-name",
-  "type": "java.lang.String",
-  "description": "A description for 'ncp.object-storage.bucket-name'"
-}]}
+{"properties": [
+  {
+    "name": "url.base",
+    "type": "java.lang.String",
+    "description": "This is used to allow cross-origin requests from the specified URL."
+  },
+  {
+    "name": "url.auth",
+    "type": "java.lang.String",
+    "description": "Authentication URL for the application."
+  },
+  {
+    "name": "ncp.access-key",
+    "type": "java.lang.String",
+    "description": "Naver Cloud Platform accessKey"
+  },
+  {
+    "name": "ncp.secret-key",
+    "type": "java.lang.String",
+    "description": "Naver Cloud Platform secretKey"
+  },
+  {
+    "name": "ncp.object-storage.region",
+    "type": "java.lang.String",
+    "description": "Naver Cloud Platform Object Storage region"
+  },
+  {
+    "name": "ncp.object-storage.endpoint",
+    "type": "java.lang.String",
+    "description": "Naver Cloud Platform Object Storage endpoint"
+  },
+  {
+    "name": "ncp.object-storage.bucket-name",
+    "type": "java.lang.String",
+    "description": "Naver Cloud Platform Object Storage bucket name"
+  }
+]}

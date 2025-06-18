@@ -9,5 +9,5 @@ import com.postsmith.api.entity.UsersEntity;
 
 @Repository
 public interface UsersRepository extends JpaRepository<UsersEntity, Integer> {
-	Optional<UsersEntity> findByUuid(String uuid);
+	Optional<UsersEntity> findByEmailAndProvider(String email, UsersEntity.ProviderEnum provider);
 }

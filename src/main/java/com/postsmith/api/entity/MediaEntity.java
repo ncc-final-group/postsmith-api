@@ -1,4 +1,4 @@
- package com.postsmith.api.entity;
+package com.postsmith.api.entity;
 
 import java.time.LocalDateTime;
 
@@ -22,21 +22,23 @@ public class MediaEntity {
 	private String uri; // Storage URI
 
 	@Column(name = "name", length = 255)
-	private String filename; // 표시할 파일 이름
+	private String name; // 표시할 파일 이름
 
-	@Column(name = "type", length = 50)
-	private String fileType; // 파일 타입 (예: image/jpeg, image/png 등)
+	@Column(name = "type", length = 255)
+	private String type; // 미디어 파일 형식
 
 	@Column(name = "size")
-	private Integer fileSize; // 파일 크기 (바이트 단위)
+	private int size; // 미디어 파일 사이즈(bytes)
 
-	@Column(name = "created_at")
+	@Column(name = "created_at", insertable = false, updatable = false)
 	private LocalDateTime createdAt;
 
 	@Builder
-	public MediaEntity(BlogsEntity blog, String uri, String filename) {
+	public MediaEntity(BlogsEntity blog, String uri, String name, String type, int size) {
 		this.blog = blog;
 		this.uri = uri;
-		this.filename = filename;
+		this.name = name;
+		this.type = type;
+		this.size = size;
 	}
 }

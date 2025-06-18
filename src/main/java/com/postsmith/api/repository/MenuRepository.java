@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public interface MenuRepository extends JpaRepository<MenuEntity, Integer> {
-        List<MenuEntity> findAllByBlog(BlogsEntity blog);
-        void deleteAllByBlog(BlogsEntity blog);
+	List<MenuEntity> findAllByBlog(BlogsEntity blog);
+
+	void deleteAllByBlog(BlogsEntity blog);
 }
