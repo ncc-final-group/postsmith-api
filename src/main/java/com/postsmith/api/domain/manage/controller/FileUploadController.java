@@ -1,3 +1,4 @@
+/*
 package com.postsmith.api.domain.manage.controller;
 
 import com.postsmith.api.domain.manage.dto.MediaDto;
@@ -222,4 +223,4 @@ public class FileUploadController {
         }
         return fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
     }
-} 
+} */

@@ -1,3 +1,4 @@
+/*
 package com.postsmith.api.domain.manage.service;
 
 import lombok.RequiredArgsConstructor;
@@ -95,4 +96,4 @@ public class FileUploadService {
         }
         return UUID.randomUUID().toString() + extension;
     }
-} 
+} */

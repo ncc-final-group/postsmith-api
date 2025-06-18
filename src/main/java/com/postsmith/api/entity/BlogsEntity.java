@@ -53,22 +53,27 @@ public class BlogsEntity {
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 }
+
 	@PrePersist
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();
 		this.updatedAt = LocalDateTime.now();
 	}
-	
+
 	@PreUpdate
 	protected void onUpdate() {
 		this.updatedAt = LocalDateTime.now();
 	}
-	
+
 	public void updateBlogInfo(String name, String nickname, String address, String description, String logoImage) {
 		if (name != null) this.name = name;
 		if (nickname != null) this.nickname = nickname;
 		if (address != null) this.address = address;
 		if (description != null) this.description = description;
 		if (logoImage != null) this.logoImage = logoImage;
+	}
+
+	public BlogsEntity(Integer id) {
+		this.id = id;
 	}
 }

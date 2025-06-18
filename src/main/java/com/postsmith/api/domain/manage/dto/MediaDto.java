@@ -1,3 +1,4 @@
+/*
 package com.postsmith.api.domain.manage.dto;
 
 import com.postsmith.api.entity.BlogsEntity;
@@ -65,4 +66,4 @@ public class MediaDto {
                 ", createdAt=" + createdAt +
                 '}';
     }
-} 
+} */

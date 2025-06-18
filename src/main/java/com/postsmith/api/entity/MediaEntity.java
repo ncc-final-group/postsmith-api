@@ -1,4 +1,4 @@
-package com.postsmith.api.entity;
+ package com.postsmith.api.entity;
 
 import java.time.LocalDateTime;
 
@@ -34,21 +34,9 @@ public class MediaEntity {
 	private LocalDateTime createdAt;
 
 	@Builder
-	public MediaEntity(BlogsEntity blog, String uri, String filename, String fileType, Integer fileSize) {
+	public MediaEntity(BlogsEntity blog, String uri, String filename) {
 		this.blog = blog;
 		this.uri = uri;
 		this.filename = filename;
-		this.fileType = fileType;
-		this.fileSize = fileSize;
-	}
-	
-	@PrePersist
-	protected void onCreate() {
-		this.createdAt = LocalDateTime.now();
-	}
-	
-	public void updateMediaInfo(String filename, String fileType) {
-		if (filename != null) this.filename = filename;
-		if (fileType != null) this.fileType = fileType;
 	}
 }

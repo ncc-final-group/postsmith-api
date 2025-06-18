@@ -1,3 +1,4 @@
+/*
 package com.postsmith.api.domain.manage.controller;
 
 import com.postsmith.api.domain.manage.dto.MediaDto;
@@ -31,11 +32,11 @@ public class MediaManageController {
 
         log.info("미디어 파일 목록 조회 요청: userId={} (무시됨), page={}, size={}, fileType={}, search={}",
                 userId, page, size, fileType, search);
-        
+
         try {
             Pageable pageable = PageRequest.of(page, size);
             Page<MediaDto> mediaFiles;
-            
+
             if (search != null && !search.trim().isEmpty()) {
                 mediaFiles = mediaService.searchMediaFiles(userId, search.trim(), pageable);
             } else if (fileType != null && !fileType.trim().isEmpty()) {
@@ -43,7 +44,7 @@ public class MediaManageController {
             } else {
                 mediaFiles = mediaService.getBlogMediaFiles(userId, pageable);
             }
-            
+
             log.info("미디어 파일 목록 조회 완료: 총 {}개 파일", mediaFiles.getTotalElements());
             return ResponseEntity.ok(mediaFiles);
         } catch (Exception e) {
@@ -89,7 +90,7 @@ public class MediaManageController {
             @RequestParam(name = "userId") Integer userId) {
 
         log.info("미디어 파일 삭제 요청: id={}, userId={} (무시됨)", id, userId);
-        
+
         try {
             mediaService.deleteMediaFile(id);
             log.info("미디어 파일 삭제 완료: id={}", id);
@@ -106,7 +107,7 @@ public class MediaManageController {
             @RequestParam(name = "userId") Integer userId) {
 
         log.info("미디어 파일 일괄 삭제 요청: ids={}, userId={} (무시됨)", ids, userId);
-        
+
         try {
             mediaService.deleteMediaFiles(ids);
             log.info("미디어 파일 일괄 삭제 완료: {} 개 파일", ids.size());
@@ -135,4 +136,4 @@ public class MediaManageController {
             throw e;
         }
     }
-} 
+} */

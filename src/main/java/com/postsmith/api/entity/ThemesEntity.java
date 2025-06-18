@@ -32,10 +32,10 @@ public class ThemesEntity {
 
    @Column(name = "html", columnDefinition = "TEXT")
    private String html; // 테마 내용
-   
+
    @Column(name = "css", columnDefinition = "TEXT")
    private String css; // 테마 스타일
-   
+
    @Builder
    public ThemesEntity(String name, String coverImage, String image, String description, String author, String authorLink, String html, String css) {
       this.name = name;
