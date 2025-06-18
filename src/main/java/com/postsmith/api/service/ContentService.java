@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ContentsService {
+public class ContentService {
 
     private final ContentsRepository contentsRepository;
 

@@ -7,8 +7,8 @@ import lombok.*;
 
 @Entity
 @Table(name = "replies")
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Data
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class RepliesEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

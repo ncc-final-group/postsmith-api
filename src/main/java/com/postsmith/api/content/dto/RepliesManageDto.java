@@ -13,6 +13,7 @@ import lombok.Data;
     "parentReplyId",
     "replyContent",
     "contentTitle",
+    "contentId",
     "createdAt"
 })
 public class RepliesManageDto {
@@ -21,5 +22,6 @@ public class RepliesManageDto {
     private Integer ParentReplyId;
     private String ReplyContent;
     private String ContentTitle;
+    private Integer ContentId;
     private LocalDateTime CreatedAt;
 }
