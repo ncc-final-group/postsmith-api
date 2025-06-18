@@ -21,8 +21,7 @@ import com.postsmith.api.content.service.PostsService;
 import com.postsmith.api.entity.ContentsEntity;
 
 @RestController
-@RequestMapping("/api/contents")
-@CrossOrigin(origins = "*") 
+@RequestMapping("/api/Posts")
 public class PostsController {
 
     private final PostsService contentService;

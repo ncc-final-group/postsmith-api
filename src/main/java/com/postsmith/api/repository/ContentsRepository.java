@@ -6,16 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+
 import org.springframework.stereotype.Repository;
 
 import com.postsmith.api.entity.BlogsEntity;
 import com.postsmith.api.entity.ContentsEntity;
 
-import java.util.List;
-
-import java.util.List;
 import java.util.Optional;
 
 import jakarta.transaction.Transactional;
@@ -66,6 +62,15 @@ public interface ContentsRepository extends JpaRepository<ContentsEntity, Intege
 	@Query("UPDATE ContentsEntity c SET c.isPublic = :isPublic WHERE c.id IN :contentIds")
 	void updateIsPublicByIds(@Param("contentIds") List<Integer> contentIds, @Param("isPublic") Boolean isPublic);
 
-
+  // 피드 컨텐츠(구독중인 블로글의 게시글) 찾기
+  @Query("""
+        SELECT c, b
+        FROM ContentsEntity c
+        JOIN SubscriptionEntity s ON c.blog.id = s.blog.id
+        JOIN BlogsEntity b ON c.blog.id = b.id
+        WHERE s.subscriber.id = :userId
+        ORDER BY c.createdAt DESC
+    """)
+    List<Object[]> findFeedContents(@Param("userId") Integer userId);
 
 }
