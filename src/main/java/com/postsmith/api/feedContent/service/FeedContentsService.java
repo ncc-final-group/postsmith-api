@@ -15,11 +15,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-<<<<<<<< HEAD:src/main/java/com/postsmith/api/feedContent/service/ContentService.java
-public class ContentService {
-========
 public class FeedContentsService {
->>>>>>>> develop:src/main/java/com/postsmith/api/feedContent/service/FeedContentsService.java
+
 
     private final ContentsRepository contentsRepository;
 
