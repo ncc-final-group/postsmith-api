@@ -33,4 +33,20 @@ public interface ContentViewsRepository extends JpaRepository<ContentViewsEntity
 	 List<ViewDto> findViewsByBlogIdGroupByDate(@Param("blogId") Integer blogId);
 
 	 
+	 @Query("SELECT SUM(cv.viewsCount) FROM ContentViewsEntity cv WHERE cv.content.id = :contentId AND cv.createdOn = :createdOn")
+	 Integer viewsByContentIdAndCreatedOn(@Param("contentId") Integer contentId, @Param("createdOn") LocalDate createdOn);
+
+	 @Query("SELECT SUM(cv.viewsCount) FROM ContentViewsEntity cv WHERE cv.content.id = :contentId")
+	 Integer totalViewsByContentId(@Param("contentId") Integer contentId);
+
+	 
+	 
+	 @Query("SELECT new com.postsmith.api.stats.dto.ViewDto(c.id, SUM(cv.viewsCount), cv.createdOn) " +
+		       "FROM ContentViewsEntity cv " +
+		       "JOIN cv.content c " +
+		       "WHERE c.id = :contentId " +
+		       "GROUP BY cv.createdOn, c.id " +
+		       "ORDER BY cv.createdOn")
+		List<ViewDto> findViewsByContentIdGroupByDate(@Param("contentId") Integer contentId);
+
 }

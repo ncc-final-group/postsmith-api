@@ -42,6 +42,21 @@ public class StatsController {
       return ResponseEntity.ok(visitStats);
   }
   
+  
+  @GetMapping("each/view/{contentId}")
+  public ResponseEntity<ViewStatsDto> getEachViewStats(@PathVariable("contentId") Integer contentId) {
+      ViewStatsDto viewStats = statsService.getViewStatsByContentId(contentId);
+      return ResponseEntity.ok(viewStats);
+  }
+  
+  @GetMapping("each/visit/{contentId}")
+  public ResponseEntity<VisitStatsDto> getEachVisitStats(@PathVariable("contentId") Integer contentId) {
+      VisitStatsDto visitStats = statsService.getVisitStatsByContentId(contentId);
+      return ResponseEntity.ok(visitStats);
+  }
+  
+  
+  
   @GetMapping("/views/daily")
   public List<ViewDto> getDailyViews(@RequestParam("blogId") Integer blogId) {
       return statsService.getDailyViewsByBlogId(blogId);
@@ -51,6 +66,17 @@ public class StatsController {
   @GetMapping("/visit/daily")
   public List<VisitDto> getDailyVisitors(@RequestParam("blogId") Integer blogId) {
       return statsService.getDailyVisitorsByBlogId(blogId);
+  }
+  
+  @GetMapping("each/views/daily")
+  public List<ViewDto> getDailyEachViews(@RequestParam("contentId") Integer contentId) {
+      return statsService.getDailyEachViewsByBlogId(contentId);
+  }
+
+  // 방문자 통계
+  @GetMapping("each/visit/daily")
+  public List<VisitDto> getDailyEachVisitors(@RequestParam("contentId") Integer contentId) {
+      return statsService.getDailyEachVisitorsByBlogId(contentId);
   }
 
 }

@@ -42,15 +42,17 @@ public class BlogsEntity {
 	private LocalDateTime updatedAt;
 
 	@Builder
-	public BlogsEntity(UsersEntity user, String name, String nickname, String address, String description, String logoImage) {
+	public BlogsEntity(UsersEntity user, String name, String nickname, String address, String description,
+            String logoImage, LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.user = user;
 		this.name = name;
 		this.nickname = nickname;
-		this.address = address;
 		this.description = description;
 		this.logoImage = logoImage;
-	}
-	
+		this.address = address;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+}
 	@PrePersist
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();

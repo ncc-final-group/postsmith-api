@@ -29,5 +29,19 @@ public interface ContentVisitsRepository extends JpaRepository<ContentVisitsEnti
 		       "ORDER BY DATE(cv.createdAt)")
 		List<VisitDto> findVisitorsByBlogIdGroupByDate(@Param("blogId") Integer blogId);
 
+	 
+	 @Query("SELECT COUNT(DISTINCT cv.ip) FROM ContentVisitsEntity cv WHERE cv.content.id = :contentId AND DATE(cv.createdAt) = :createdOn")
+	 Integer countVisitorsByContentIdAndCreatedOn(@Param("contentId") Integer contentId, @Param("createdOn") LocalDate createdOn);
+
+	 @Query("SELECT COUNT(DISTINCT cv.ip) FROM ContentVisitsEntity cv WHERE cv.content.id = :contentId")
+	 Integer countTotalVisitorsByContentId(@Param("contentId") Integer contentId);
+
+	 @Query("SELECT new com.postsmith.api.stats.dto.VisitDto(c.id, COUNT(DISTINCT cv.ip), DATE(cv.createdAt)) " +
+		       "FROM ContentVisitsEntity cv " +
+		       "JOIN cv.content c " +
+		       "WHERE c.id = :contentId " +
+		       "GROUP BY DATE(cv.createdAt), c.id " +
+		       "ORDER BY DATE(cv.createdAt)")
+		List<VisitDto> findVisitorsByContentIdGroupByDate(@Param("contentId") Integer contentId);
 
 }

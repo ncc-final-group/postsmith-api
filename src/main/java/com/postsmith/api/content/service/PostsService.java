@@ -49,6 +49,7 @@ public class PostsService {
             dto.setIsPublic(content.getIsPublic());
             dto.setLikes(content.getLikes());
             dto.setCreatedAt(content.getCreatedAt());
+            dto.setSequence(content.getSequence());
 
             CategoriesEntity category = content.getCategory();
             if (category != null) {
