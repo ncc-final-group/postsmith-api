@@ -1,7 +1,9 @@
-package com.postsmith.api.dto;
+package com.postsmith.api.feedContent.dto;
 
 import com.postsmith.api.entity.BlogsEntity;
 import com.postsmith.api.entity.ContentsEntity;
+import com.postsmith.api.theme.dto.BlogsDto;
+
 import lombok.*;
 
 @Getter

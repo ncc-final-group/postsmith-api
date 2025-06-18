@@ -1,7 +1,7 @@
-package com.postsmith.api.controller;
+package com.postsmith.api.feedContent.controller;
 
-import com.postsmith.api.dto.FeedContentsDto;
-import com.postsmith.api.service.ContentsService;
+import com.postsmith.api.feedContent.dto.FeedContentsDto;
+import com.postsmith.api.feedContent.service.FeedContentsService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
 @RestController
-@RequestMapping("/api/contents")
+@RequestMapping("/api/feedContents")
 @RequiredArgsConstructor
-public class ContentsController {
+public class FeedContentsController {
 
-    private final ContentsService contentsService;
+    private final FeedContentsService contentsService;
 
     // 피드 컨텐츠(구독중인 블로글의 게시글) 찾기
     @GetMapping("/userId/{userId}")

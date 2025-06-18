@@ -1,8 +1,8 @@
-package com.postsmith.api.service;
+package com.postsmith.api.feedContent.service;
 
-import com.postsmith.api.dto.FeedContentsDto;
 import com.postsmith.api.entity.BlogsEntity;
 import com.postsmith.api.entity.ContentsEntity;
+import com.postsmith.api.feedContent.dto.FeedContentsDto;
 import com.postsmith.api.repository.ContentsRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ContentsService {
+public class FeedContentsService {
 
     private final ContentsRepository contentsRepository;
 
