@@ -16,7 +16,7 @@ public class SubscriptionId implements Serializable {
 	private Integer subscriberId; // FK > users.id
 
 	@Column(name = "blog_id", nullable = false)
-	private Integer blogId; // FK > users.id
+	private Integer blogId; // FK > blog.id
 
 	@Builder
 	public SubscriptionId(Integer subscriberId, Integer blogId) {

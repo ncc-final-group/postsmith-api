@@ -10,7 +10,7 @@ import lombok.*;
 @Table(name = "users")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class UsersEntity {
 	public enum ProviderEnum {
 		EMAIL, GOOGLE, GITHUB, NAVER, KAKAO
@@ -50,15 +50,14 @@ public class UsersEntity {
 	@Column(name = "description", columnDefinition = "TEXT")
 	private String description; // 자기소개
 
-	@Column(name = "created_at")
+	@Column(name = "created_at", insertable = false, updatable = false)
 	private LocalDateTime createdAt;
 
-	@Column(name = "updated_at")
+	@Column(name = "updated_at", insertable = false, updatable = false)
 	private LocalDateTime updatedAt;
 
 	@Builder
-	public UsersEntity(String uuid, String email, String password, ProviderEnum provider, RoleEnum role, String nickname, String profileImage,
-			String description) {
+	public UsersEntity(String uuid, String email, String password, ProviderEnum provider, RoleEnum role, String nickname, String profileImage, String description) {
 		this.uuid = uuid;
 		this.email = email;
 		this.password = password;

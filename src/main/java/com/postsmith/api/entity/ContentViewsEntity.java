@@ -22,7 +22,7 @@ public class ContentViewsEntity {
 	@Column(name = "views_count")
 	private Integer viewsCount; // 일일 조회수
 
-	@Column(name = "created_on")
+	@Column(name = "created_on", insertable = false, updatable = false)
 	private LocalDate createdOn; // not created_at
 
 	@Builder

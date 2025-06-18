@@ -27,7 +27,7 @@ public class ContentVisitsEntity {
 	@Column(name = "ip", length = 12, nullable = false, columnDefinition = "CHAR(12)")
 	private String ip; // 접속 IP
 
-	@Column(name = "created_at")
+	@Column(name = "created_at", insertable = false, updatable = false)
 	private LocalDateTime createdAt;
 
 	@Builder

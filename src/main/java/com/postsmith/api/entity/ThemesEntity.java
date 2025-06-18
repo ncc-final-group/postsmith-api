@@ -31,11 +31,11 @@ public class ThemesEntity {
 	private String authorLink = ""; // 제작자 링크
 
 	@Column(name = "html", columnDefinition = "TEXT")
-	private String html; // 테마 HTML 코드
+	private String html; // 테마 내용
 
 	@Column(name = "css", columnDefinition = "TEXT")
-	private String css; // 테마 CSS 코드
-	
+	private String css; // 테마 스타일
+
 	@Builder
 	public ThemesEntity(String name, String coverImage, String image, String description, String author, String authorLink, String html, String css) {
 		this.name = name;

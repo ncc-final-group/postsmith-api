@@ -14,36 +14,31 @@ import java.util.List;
 
 @Repository
 public interface MediaRepository extends JpaRepository<MediaEntity, Integer> {
-    
-    // 블로그별 미디어 파일 조회
-    Page<MediaEntity> findByBlogOrderByCreatedAtDesc(BlogsEntity blog, Pageable pageable);
-    
-    // 블로그와 파일 타입별 조회
-    Page<MediaEntity> findByBlogAndFileTypeOrderByCreatedAtDesc(BlogsEntity blog, String fileType, Pageable pageable);
-    
-    // 블로그별 파일명 검색
-    @Query("SELECT m FROM MediaEntity m WHERE m.blog = :blog AND " +
-            "LOWER(m.filename) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "ORDER BY m.createdAt DESC")
-    Page<MediaEntity> searchByBlogAndKeyword(@Param("blog") BlogsEntity blog, 
-                                           @Param("keyword") String keyword, 
-                                           Pageable pageable);
-    
-    // URI로 중복 확인
-    boolean existsByUri(String uri);
-    
-    // 블로그별 총 파일 크기 계산
-    @Query("SELECT COALESCE(SUM(m.fileSize), 0) FROM MediaEntity m WHERE m.blog = :blog")
-    Long getTotalFileSizeByBlog(@Param("blog") BlogsEntity blog);
-    
-    // 블로그별 파일 타입별 개수 조회
-    @Query("SELECT m.fileType, COUNT(m) FROM MediaEntity m WHERE m.blog = :blog GROUP BY m.fileType")
-    List<Object[]> getFileTypeCountsByBlog(@Param("blog") BlogsEntity blog);
-    
-    // 블로그별 파일 개수 조회
-    Long countByBlog(BlogsEntity blog);
-    
-    // 날짜 범위로 조회
-    Page<MediaEntity> findByBlogAndCreatedAtBetweenOrderByCreatedAtDesc(
-            BlogsEntity blog, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+
+	// 블로그별 미디어 파일 조회
+	Page<MediaEntity> findByBlogOrderByCreatedAtDesc(BlogsEntity blog, Pageable pageable);
+
+//	// 블로그와 파일 타입별 조회
+//	Page<MediaEntity> findByBlogAndFileTypeOrderByCreatedAtDesc(BlogsEntity blog, String fileType, Pageable pageable);
+
+//	// 블로그별 파일명 검색
+//	@Query("SELECT m FROM MediaEntity m WHERE m.blog = :blog AND " + "LOWER(m.filename) LIKE LOWER(CONCAT('%', :keyword, '%')) " + "ORDER BY m.createdAt DESC")
+//	Page<MediaEntity> searchByBlogAndKeyword(@Param("blog") BlogsEntity blog, @Param("keyword") String keyword, Pageable pageable);
+
+	// URI로 중복 확인
+	boolean existsByUri(String uri);
+
+//	// 블로그별 총 파일 크기 계산
+//	@Query("SELECT COALESCE(SUM(m.fileSize), 0) FROM MediaEntity m WHERE m.blog = :blog")
+//	Long getTotalFileSizeByBlog(@Param("blog") BlogsEntity blog);
+
+//	// 블로그별 파일 타입별 개수 조회
+//	@Query("SELECT m.fileType, COUNT(m) FROM MediaEntity m WHERE m.blog = :blog GROUP BY m.fileType")
+//	List<Object[]> getFileTypeCountsByBlog(@Param("blog") BlogsEntity blog);
+
+	// 블로그별 파일 개수 조회
+	Long countByBlog(BlogsEntity blog);
+
+	// 날짜 범위로 조회
+	Page<MediaEntity> findByBlogAndCreatedAtBetweenOrderByCreatedAtDesc(BlogsEntity blog, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 }
