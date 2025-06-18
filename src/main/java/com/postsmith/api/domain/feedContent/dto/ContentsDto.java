@@ -28,10 +28,28 @@ public class ContentsDto {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
+	private String blogAddress;
+	private String categoryName;
+
+	//에러가 난다면 blogAddresss랑 categoryName을 빼십쇼
 	public static ContentsDto fromEntity(ContentsEntity entity) {
-		return ContentsDto.builder().id(entity.getId()).categoryId(entity.getCategory() != null ? entity.getCategory().getId() : null).blogId(entity.getBlog().getId())
-				.sequence(entity.getSequence()).type(entity.getType()).title(entity.getTitle()).contentHtml(entity.getContentHtml()).contentPlain(entity.getContentPlain())
-				.isTemp(entity.getIsTemp()).isPublic(entity.getIsPublic()).likes(entity.getLikes()).createdAt(entity.getCreatedAt()).updatedAt(entity.getUpdatedAt()).build();
+		return ContentsDto.builder()
+				.id(entity.getId())
+				.categoryId(entity.getCategory() != null ? entity.getCategory().getId() : null)
+				.categoryName(entity.getCategory() != null ? entity.getCategory().getName() : null)
+				.blogId(entity.getBlog().getId())
+				.blogAddress(entity.getBlog() != null ? entity.getBlog().getAddress() : null)
+				.sequence(entity.getSequence())
+				.type(entity.getType())
+				.title(entity.getTitle())
+				.contentHtml(entity.getContentHtml())
+				.contentPlain(entity.getContentPlain())
+				.isTemp(entity.getIsTemp())
+				.isPublic(entity.getIsPublic())
+				.likes(entity.getLikes())
+				.createdAt(entity.getCreatedAt())
+				.updatedAt(entity.getUpdatedAt())
+				.build();
 	}
 
 	public ContentsEntity toEntity(CategoriesEntity category, BlogsEntity blog) {
