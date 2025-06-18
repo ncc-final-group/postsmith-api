@@ -13,28 +13,21 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MenuService {
-    private final MenuRepository menuRepository;
+	private final MenuRepository menuRepository;
 
-    @Transactional
-    public void replaceAllMenus(List<MenuDto> dtos, BlogsEntity blog) {
-        menuRepository.deleteAllByBlog(blog); // 블로그별 삭제
+	@Transactional
+	public void replaceAllMenus(List<MenuDto> dtos, BlogsEntity blog) {
+		menuRepository.deleteAllByBlog(blog); // 블로그별 삭제
 
-        for (MenuDto dto : dtos) {
-            MenuEntity entity = MenuEntity.builder()
-                    .blog(blog)
-                    .name(dto.getName())
-                    .uri(dto.getUri())
-                    .type(MenuEntity.MenuEnum.valueOf(dto.getType()))
-                    .isBlank(dto.isBlank())
-                    .build();
+		for (MenuDto dto : dtos) {
+			MenuEntity entity = MenuEntity.builder().blog(blog).name(dto.getName()).uri(dto.getUri()).type(MenuEntity.MenuEnum.valueOf(dto.getType())).isBlank(dto.isBlank())
+					.build();
 
-            menuRepository.save(entity);
-        }
-    }
+			menuRepository.save(entity);
+		}
+	}
 
-    public List<MenuDto> getMenus(BlogsEntity blog) {
-        return menuRepository.findAllByBlog(blog).stream()
-                .map(MenuDto::fromEntity)
-                .toList();
-    }
+	public List<MenuDto> getMenus(BlogsEntity blog) {
+		return menuRepository.findAllByBlog(blog).stream().map(MenuDto::fromEntity).toList();
+	}
 }

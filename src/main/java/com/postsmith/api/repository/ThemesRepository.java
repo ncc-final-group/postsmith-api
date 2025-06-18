@@ -11,10 +11,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ThemesRepository extends JpaRepository<ThemesEntity, Integer> {
 	@Query("""
-		    SELECT tte.theme, tte.tag
-			FROM ThemeTagsEntity tte
-			JOIN tte.theme th
-			JOIN tte.tag ta
-		""")
-		List<Object[]> findThemes();
+			    SELECT tte.theme, tte.tag
+				FROM ThemeTagsEntity tte
+				JOIN tte.theme th
+				JOIN tte.tag ta
+			""")
+	List<Object[]> findThemes();
 }

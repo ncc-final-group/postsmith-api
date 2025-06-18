@@ -22,7 +22,7 @@ public class BlogThemesEntity {
 
 	@Column(name = "theme_setting", columnDefinition = "TEXT")
 	private String themeSetting; // 테마 설정(HTML)
-	
+
 	@Column(name = "is_active")
 	private Boolean isActive; // 테마 활성화 여부
 
