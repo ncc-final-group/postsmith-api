@@ -2,6 +2,7 @@ package com.postsmith.api.theme.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.postsmith.api.entity.BlogsEntity;
 
 import lombok.*;
@@ -17,7 +18,7 @@ public class BlogsDto {
     private String address;
     private String description;
     private String logoImage;
-    private Integer user_id;
+    private Integer userId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
@@ -29,7 +30,7 @@ public class BlogsDto {
                 .address(entity.getAddress())
                 .description(entity.getDescription())
                 .logoImage(entity.getLogoImage())
-                .user_id(entity.getUser().getId())
+                .userId(entity.getUser().getId())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .build();
@@ -44,5 +45,17 @@ public class BlogsDto {
                 .description(this.description)
                 .logoImage(this.logoImage)
                 .build();
+    }
+    
+    @Override
+    public String toString() {
+        return "BlogsDto{" +
+               "name='" + name + '\'' +
+               ", nickname='" + nickname + '\'' +
+               ", address='" + address + '\'' +
+               ", logoImage='" + logoImage + '\'' +
+               ", userId='" + userId + '\'' +
+               ", description='" + description + '\'' +
+               '}';
     }
 }
