@@ -31,4 +31,13 @@ public interface CategoriesRepository extends JpaRepository<CategoriesEntity, In
 
     // 카테고리 이름으로 검색
     List<CategoriesEntity> findByBlogAndNameContainingIgnoreCaseOrderBySequenceAsc(BlogsEntity blog, String name);
+
+    //blog_id가 같고 category_id 가 같은 카테고리의 개수를 조회
+    @Query("""
+    SELECT c.category.id, COUNT(c)
+    FROM ContentsEntity c
+    WHERE c.blog.id = :blogId AND c.category IS NOT NULL
+    GROUP BY c.category.id
+""")
+    List<Object[]> countPostsByCategoryId(@Param("blogId") int blogId);
 }

@@ -111,6 +111,12 @@ public class CategoryService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
+        Integer blogId = updatedCategories.stream()
+                .map(CategoryDto::getBlogId)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("모든 카테고리에서 blogId가 누락되었습니다."));
+
         List<CategoriesEntity> toDelete = existingMap.values().stream()
                 .filter(e -> !updatedIds.contains(e.getId()))
                 .collect(Collectors.toList());
@@ -163,7 +169,7 @@ public class CategoryService {
             entity.changeCategory(parent);
         }
         if (updatedCategories.get(0).getBlogId() == null) {
-            throw new IllegalArgumentException("blogId가 null입니다. 클라이언트에서 blogId를 포함해야 합니다.");
+            throw new IllegalArgumentException("카테고리에 blogId가 포함되지 않았습니다. 클라이언트에서 blogId를 명시해야 합니다.");
         }
 
         // 부모 설정 후 재저장
@@ -174,6 +180,14 @@ public class CategoryService {
                     e.getId(), e.getName(), e.getSequence(),
                     e.getParent() != null ? e.getParent().getId() : null);
         });
+    }
+
+    public Map<Long, Long> getPostCounts(int blogId) {
+        List<Object[]> raw = categoriesRepository.countPostsByCategoryId(blogId);
+        return raw.stream().collect(Collectors.toMap(
+                row -> ((Number) row[0]).longValue(),  // category_id
+                row -> ((Number) row[1]).longValue()   // count
+        ));
     }
 
 

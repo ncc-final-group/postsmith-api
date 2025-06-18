@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -41,11 +42,16 @@ public class CategoryController {
         return ResponseEntity.ok(tree);
     }
 
-    // 필요시 유지
+    // 전체저장
     @PutMapping
     public ResponseEntity<Void> saveAllCategories(@RequestBody List<CategoryDto> updatedCategories) {
         categoriesService.saveAllCategories(updatedCategories);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/posts/counts")
+    public Map<Long, Long> getPostCounts(@RequestParam("blogId") int blogId) {
+        return categoriesService.getPostCounts(blogId);
     }
 
     
