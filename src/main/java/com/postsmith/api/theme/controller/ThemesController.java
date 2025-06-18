@@ -1,10 +1,15 @@
-package com.postsmith.api.controller;
+package com.postsmith.api.theme.controller;
 
-import com.postsmith.api.dto.ThemesDto;
-import com.postsmith.api.service.ThemesService;
+
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.postsmith.api.theme.dto.ThemeTagsDto;
+import com.postsmith.api.theme.dto.ThemesDto;
+import com.postsmith.api.theme.service.ThemesService;
 
 import java.util.List;
 
@@ -23,8 +28,8 @@ public class ThemesController {
     }
 
     // 모든 테마
-    @GetMapping
-    public ResponseEntity<List<ThemesDto>> getAllThemes() {
+    @GetMapping("/a")
+    public ResponseEntity<List<ThemeTagsDto>> getAllThemes() {
         return ResponseEntity.ok(themesService.getAllThemes());
     }
 }

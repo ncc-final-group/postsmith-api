@@ -1,4 +1,4 @@
-package com.postsmith.api.dto;
+package com.postsmith.api.feedContent.dto;
 
 import java.time.LocalDateTime;
 

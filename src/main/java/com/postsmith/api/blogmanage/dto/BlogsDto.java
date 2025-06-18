@@ -1,4 +1,4 @@
-package com.postsmith.api.dto;
+package com.postsmith.api.blogmanage.dto;
 
 import java.time.LocalDateTime;
 
@@ -17,7 +17,7 @@ public class BlogsDto {
     private String address;
     private String description;
     private String logoImage;
-    private Integer user_id;
+    private Integer userId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
@@ -29,7 +29,7 @@ public class BlogsDto {
                 .address(entity.getAddress())
                 .description(entity.getDescription())
                 .logoImage(entity.getLogoImage())
-                .user_id(entity.getUser().getId())
+                .userId(entity.getUser().getId())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .build();
@@ -43,8 +43,6 @@ public class BlogsDto {
                 .address(this.address)
                 .description(this.description)
                 .logoImage(this.logoImage)
-                .createdAt(this.createdAt)
-                .updatedAt(this.updatedAt)
                 .build();
     }
 }

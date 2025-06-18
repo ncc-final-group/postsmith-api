@@ -14,6 +14,9 @@ import com.postsmith.api.entity.UsersEntity;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import org.springframework.data.repository.query.Param;
+import jakarta.transaction.Transactional;
+
 import java.util.Optional;
 
 @Repository
@@ -33,13 +36,15 @@ public interface BlogsRepository extends JpaRepository<BlogsEntity, Integer> {
         UPDATE blogs 
         SET name = :name, 
             nickname = :nickname, 
-            description = :description 
+            description = :description,
+            logo_image = :logoImage
         WHERE id = :id
         """, nativeQuery = true)
     int updateBlog(@Param("id") Integer id,
                        @Param("name") String name,
                        @Param("nickname") String nickname,
-                       @Param("description") String description);
+                       @Param("description") String description,
+                       @Param("logoImage") String logo_image);
     
     // blog_id로 블로그 정보
     @Query(value = """
