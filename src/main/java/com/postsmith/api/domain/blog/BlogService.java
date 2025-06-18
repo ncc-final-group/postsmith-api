@@ -49,14 +49,24 @@ public class BlogService {
     
     @Transactional(readOnly = true)
     public BlogsEntity findBlogByAddress(String address) {
-        return blogsRepository.findByAddress(address)
+        return blogsRepository.findByAddressWithTheme(address)
                 .orElseThrow(() -> new IllegalArgumentException("Blog not found with address: " + address));
     }
     
     @Transactional(readOnly = true)
     public BlogsEntity findBlogById(Integer id) {
-        return blogsRepository.findById(id)
+        log.info("Finding blog by ID: {}", id);
+        
+        BlogsEntity blog = blogsRepository.findByIdWithTheme(id)
                 .orElseThrow(() -> new IllegalArgumentException("Blog not found with ID: " + id));
+        
+        if (blog.getTheme() != null) {
+            log.debug("Blog {} has theme ID: {}", id, blog.getTheme().getId());
+        } else {
+            log.debug("Blog {} has no theme assigned", id);
+        }
+        
+        return blog;
     }
     
     @Transactional(readOnly = true)
