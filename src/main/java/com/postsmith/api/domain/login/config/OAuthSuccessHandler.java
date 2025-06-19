@@ -22,6 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 	@Value("${url.base}")
 	private String baseUrl;
+	
+	@Value("${url.domain}")
+	private String domain;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -34,15 +37,15 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 			log.info("Custom OIDC OAuth2 User Session ID: " + oidcUser.getAttributes());
 			sessionId = oidcUser.getSessionId();
 		}
-		Cookie cookie = new Cookie("CLIENT_SESSION_ID", sessionId);
-		cookie.setPath("/");
-		cookie.setHttpOnly(true);
-		cookie.setSecure(true);
-		cookie.setMaxAge(3600);
-		cookie.setDomain(".postsmith.kro.kr");
-		response.addCookie(cookie);
-//		ResponseCookie responseCookie = ResponseCookie.from("CLIENT_SESSION_ID", sessionId).path("/").httpOnly(true).maxAge(3600).secure(true).sameSite("None").build();
-//		response.addHeader("Set-Cookie", responseCookie.toString());
+//		Cookie cookie = new Cookie("CLIENT_SESSION_ID", sessionId);
+//		cookie.setPath("/");
+//		cookie.setHttpOnly(true);
+//		cookie.setSecure(true);
+//		cookie.setMaxAge(3600);
+//		cookie.setDomain("postsmith.kro.kr");
+//		response.addCookie(cookie);
+		ResponseCookie responseCookie = ResponseCookie.from("CLIENT_SESSION_ID", sessionId).path("/").httpOnly(true).secure(true).domain(domain).sameSite("None").build();
+		response.addHeader("Set-Cookie", responseCookie.toString());
 
 		response.sendRedirect(baseUrl);
 	}
