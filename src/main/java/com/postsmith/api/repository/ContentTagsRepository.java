@@ -7,5 +7,5 @@ import com.postsmith.api.entity.ContentTagsEntity;
 import com.postsmith.api.entity.ContentTagsId;
 
 @Repository
-public interface ContentTagsRepository extends JpaRepository<ContentTagsEntity, ContentTagsId>{
+public interface ContentTagsRepository extends JpaRepository<ContentTagsEntity, ContentTagsId> {
 }

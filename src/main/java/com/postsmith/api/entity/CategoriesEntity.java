@@ -13,12 +13,12 @@ public class CategoriesEntity {
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "blog_id", nullable = false, referencedColumnName = "id")
+	@JoinColumn(name = "blog_id", referencedColumnName = "id", nullable = false)
 	private BlogsEntity blog; // FK > blogs.id
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "category_id", nullable = false, referencedColumnName = "id")
-	private CategoriesEntity category; // FK > categories.id
+	@JoinColumn(name = "category_id", nullable = true, referencedColumnName = "id")
+	private CategoriesEntity parent; // FK > categories.id
 
 	@Column(name = "name", length = 100, nullable = false)
 	private String name; // 카테고리 이름
@@ -30,10 +30,12 @@ public class CategoriesEntity {
 	private String description; // 카테고리 설명
 
 	@Builder
-	public CategoriesEntity(BlogsEntity blog, CategoriesEntity category, String name, String description) {
+	public CategoriesEntity(BlogsEntity blog, CategoriesEntity category, String name, Integer sequence, String description) {
 		this.blog = blog;
-		this.category = category;
+		this.parent = category;
+		this.sequence = sequence;
 		this.name = name;
+		this.sequence = sequence;
 		this.description = description;
 	}
 }

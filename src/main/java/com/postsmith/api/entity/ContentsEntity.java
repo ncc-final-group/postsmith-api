@@ -2,6 +2,7 @@ package com.postsmith.api.entity;
 
 import java.time.LocalDateTime;
 
+import com.postsmith.api.domain.manage.dto.ContentsResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,6 +11,12 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ContentsEntity {
+	public ContentsResponseDto toDto() {
+		return ContentsResponseDto.builder().id(this.id).categoryId(this.category != null ? this.category.getId() : null).blogId(this.blog.getId()).sequence(this.sequence)
+				.postType(this.type.name()).title(this.title).contentHtml(this.contentHtml).contentPlain(this.contentPlain).isTemp(this.isTemp).isPublic(this.isPublic)
+				.likes(this.likes != null ? this.likes : 0).createdAt(this.createdAt).updatedAt(this.updatedAt).build();
+	}
+
 	public enum ContentEnum {
 		POSTS, PAGE, NOTICE
 	}
@@ -51,10 +58,10 @@ public class ContentsEntity {
 	@Column(name = "likes")
 	private Integer likes; // 좋아요 수
 
-	@Column(name = "created_at")
+	@Column(name = "created_at", insertable = false, updatable = false)
 	private LocalDateTime createdAt;
 
-	@Column(name = "updated_at")
+	@Column(name = "updated_at", insertable = false, updatable = false)
 	private LocalDateTime updatedAt;
 
 	@Builder
@@ -70,5 +77,41 @@ public class ContentsEntity {
 		this.isTemp = isTemp;
 		this.isPublic = isPublic;
 		this.likes = likes;
+	}
+
+	@PrePersist
+	protected void onCreate() {
+		this.createdAt = LocalDateTime.now();
+		this.updatedAt = LocalDateTime.now();
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		this.updatedAt = LocalDateTime.now();
+	}
+
+	// 업데이트를 위한 메서드들
+	public void updateContent(String title, String contentHtml, String contentPlain, Boolean isTemp, Boolean isPublic) {
+		this.title = title;
+		this.contentHtml = contentHtml;
+		this.contentPlain = contentPlain;
+		this.isTemp = isTemp;
+		this.isPublic = isPublic;
+	}
+
+	public void updateCategory(CategoriesEntity category) {
+		this.category = category;
+	}
+
+	public void updateType(ContentEnum type) {
+		this.type = type;
+	}
+
+	public void incrementLikes() {
+		this.likes = (this.likes == null ? 0 : this.likes) + 1;
+	}
+
+	public void decrementLikes() {
+		this.likes = (this.likes == null || this.likes <= 0) ? 0 : this.likes - 1;
 	}
 }
