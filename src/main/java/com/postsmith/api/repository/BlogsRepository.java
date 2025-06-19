@@ -25,6 +25,10 @@ public interface BlogsRepository extends JpaRepository<BlogsEntity, Integer> {
 	List<BlogsEntity> findByUserOrderByCreatedAtDesc(UsersEntity user);
 
 	Long countByUser(UsersEntity user);
+	
+	@Query("SELECT b.id FROM BlogsEntity b WHERE b.address = :address")
+	Optional<Integer> findIdByAddress(@Param("address") String address);
+
 
 	// userId로 운영중인 블로그 정보
 	List<BlogsEntity> findAllByUser_Id(Integer userId);
