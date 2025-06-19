@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/menus")
 public class MenuController {
@@ -31,15 +30,6 @@ public class MenuController {
 
 	BlogsEntity blog = new BlogsEntity(1);
 
-	/*
-	 * @GetMapping public List<MenuDto> getMenus() { BlogsEntity blog = getCurrentUserBlog(); // 또는 @RequestParam 사용 return menuService.getMenus(blog); }
-	 * 
-	 * @PutMapping public ResponseEntity<Void> saveMenus(@RequestBody List<MenuDto> menus) { BlogsEntity blog = getCurrentUserBlog(); // 또는 blogId로 조회
-	 * menuService.replaceAllMenus(menus, blog); return ResponseEntity.noContent().build(); }
-	 * 
-	 * public BlogsEntity getCurrentUserBlog() { UserPrincipal user = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); return user.getBlog();
-	 * // 또는 user.getBlogId() → blogService.findById(...) }
-	 */
 
 	// Controller
 	@GetMapping
@@ -58,7 +48,12 @@ public class MenuController {
 
 	@GetMapping("/categories")
 	public List<CategoryDto> getCategories(@RequestParam int blogId) {
-		return categoriesRepository.findByBlogId(blogId).stream().map(c -> new CategoryDto(c.getId(), c.getName())).collect(Collectors.toList());
+		return categoriesRepository.findByBlogId(blogId).stream().map(c -> {
+			CategoryDto dto = new CategoryDto();
+			dto.setId(c.getId());
+			dto.setName(c.getName());
+			return dto;
+		}).collect(Collectors.toList());
 	}
 
 	@GetMapping("/pages")

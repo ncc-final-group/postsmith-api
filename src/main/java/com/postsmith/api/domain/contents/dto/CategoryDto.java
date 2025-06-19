@@ -1,6 +1,8 @@
 package com.postsmith.api.domain.contents.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.postsmith.api.entity.BlogsEntity;
+import com.postsmith.api.entity.CategoriesEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -24,9 +26,13 @@ public class CategoryDto {
 	private String description;
 	private List<CategoryDto> children = new ArrayList<>();
 
-	public CategoryDto(Integer id, String name) {
-		this.id = id;
-		this.name = name;
+	public CategoriesEntity toEntity(BlogsEntity blog, CategoriesEntity parent) {
+		return CategoriesEntity.builder()
+				.name(this.name)
+				.description(this.description)
+				.sequence(this.sequence)
+				.blog(blog)
+				.parent(parent)
+				.build();
 	}
-
 }
