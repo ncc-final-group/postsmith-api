@@ -22,6 +22,9 @@ public interface BlogsRepository extends JpaRepository<BlogsEntity, Integer> {
 
 	Optional<BlogsEntity> findByAddress(String address);
 
+	@Query("SELECT b.id FROM BlogsEntity b WHERE b.address = :address")
+	Optional<Integer> findIdByAddress(@Param("address") String address);
+
 	List<BlogsEntity> findByUserOrderByCreatedAtDesc(UsersEntity user);
 
 	Long countByUser(UsersEntity user);
@@ -63,5 +66,15 @@ public interface BlogsRepository extends JpaRepository<BlogsEntity, Integer> {
 			    VALUES (:subscriberId, :blogId)
 			""", nativeQuery = true)
 	int insertSubscription(@Param("subscriberId") Integer subscriberId, @Param("blogId") Integer blogId);
+
+	//kjh가 추가
+	@Query("""
+    SELECT b.address 
+    FROM BlogsEntity b 
+    WHERE b.user.id = :userId 
+    ORDER BY b.createdAt ASC
+    LIMIT 1
+""")
+	String findTopAddressByUserId(@Param("userId") Integer userId);
 
 }

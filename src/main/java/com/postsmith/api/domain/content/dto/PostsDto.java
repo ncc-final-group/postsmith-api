@@ -14,6 +14,7 @@ public class PostsDto {
 	private ContentEnum contentType;
 	private String title;
 	private Integer sequence;
+	private String address;
 
 	private Integer categoryid;
 	private String categoryName;

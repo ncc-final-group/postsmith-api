@@ -128,4 +128,6 @@ public class ContentsService {
 	public List<ContentsEntity> searchContents(BlogsEntity blog, String keyword) {
 		return contentsRepository.findByBlogAndTitleContainingIgnoreCaseOrderBySequenceDesc(blog, keyword);
 	}
+
+
 }

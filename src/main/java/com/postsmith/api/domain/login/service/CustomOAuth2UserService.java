@@ -41,7 +41,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		UsersEntity.RoleEnum role = UsersEntity.RoleEnum.USER; // USER 고정값
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 		String tokenValue = userRequest.getAccessToken().getTokenValue();
-		System.out.println("tokenValue = " + tokenValue);
 		OAuth2Response oAuth2Response = null;
 
 		switch (registrationId) {
