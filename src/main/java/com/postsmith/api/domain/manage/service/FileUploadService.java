@@ -23,23 +23,22 @@ import java.util.UUID;
 @Slf4j
 public class FileUploadService {
 
-    @Value("${ncp.object-storage.bucket-name:postsmith-bucket}")
+    @Value("${ncp.object-storage.bucket-name}")
     private String bucketName;
 
-    @Value("${ncp.object-storage.region:kr-standard}")
+    @Value("${ncp.object-storage.region}")
     private String region;
 
-    @Value("${ncp.object-storage.access-key}")
+    @Value("${ncp.access-key}")
     private String accessKey;
 
-    @Value("${ncp.object-storage.secret-key}")
+    @Value("${ncp.secret-key}")
     private String secretKey;
 
     @Value("${ncp.object-storage.endpoint}")
     private String endpoint;
 
-    @Value("${ncp.object-storage.base-url}")
-    private String baseUrl;
+    private String baseUrl = endpoint + "/" + bucketName;
 
     private S3Client getS3Client() {
         AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(accessKey, secretKey);

@@ -42,4 +42,8 @@ public interface BlogThemesRepository extends JpaRepository<BlogThemesEntity, In
     @Transactional
     @Query("UPDATE BlogThemesEntity bt SET bt.isActive = true WHERE bt.id = :id")
     void activateById(@Param("id") Integer id);
+
+    @Modifying
+    @Query("UPDATE BlogThemesEntity bt SET bt.isActive = false WHERE bt.blog = :blog AND bt.isActive = true")
+    void deactivateAllThemesByBlog(@Param("blog") BlogsEntity blog);
 }

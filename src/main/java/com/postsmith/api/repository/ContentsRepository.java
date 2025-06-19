@@ -43,6 +43,9 @@ public interface ContentsRepository extends JpaRepository<ContentsEntity, Intege
 	// 임시저장 콘텐츠 조회
 	List<ContentsEntity> findByBlogAndIsTempTrueOrderBySequenceDesc(BlogsEntity blog);
 
+	// 특정 타입의 임시저장 콘텐츠 조회
+	List<ContentsEntity> findByBlogAndIsTempTrueAndTypeOrderBySequenceDesc(BlogsEntity blog, ContentsEntity.ContentEnum type);
+
 	// 좋아요 순으로 콘텐츠 조회
 	List<ContentsEntity> findByBlogAndIsPublicTrueOrderByLikesDesc(BlogsEntity blog);
 

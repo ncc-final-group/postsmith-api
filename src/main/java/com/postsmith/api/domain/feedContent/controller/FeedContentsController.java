@@ -22,5 +22,4 @@ public class FeedContentsController {
 	public List<FeedContentsDto> findFeedContents(@PathVariable("userId") Integer userId) {
 		return contentsService.findFeedContents(userId);
 	}
-
 }

@@ -130,4 +130,21 @@ public class ContentsController {
 			return ResponseEntity.badRequest().build();
 		}
 	}
+
+	@GetMapping("/blog/{blogId}/drafts")
+	public ResponseEntity<List<ContentsResponseDto>> getDraftContents(
+			@PathVariable("blogId") Integer blogId,
+			@RequestParam(required = false) String type) {
+		try {
+			BlogsEntity blog = blogService.findBlogById(blogId);
+			List<ContentsResponseDto> drafts = contentsService.getDraftContents(blog, type);
+			return ResponseEntity.ok(drafts);
+		} catch (IllegalArgumentException e) {
+			log.error("Blog not found with id: {}", blogId, e);
+			return ResponseEntity.notFound().build();
+		} catch (Exception e) {
+			log.error("Error getting draft contents: {}", e.getMessage(), e);
+			return ResponseEntity.badRequest().build();
+		}
+	}
 }
