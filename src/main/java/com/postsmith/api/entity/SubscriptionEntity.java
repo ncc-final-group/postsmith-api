@@ -27,11 +27,15 @@ public class SubscriptionEntity {
 	@Column(name = "created_at", insertable = false, updatable = false)
 	private LocalDateTime createdAt;
 
-	@Builder
-	public SubscriptionEntity(UsersEntity subscriber, BlogsEntity blog) {
-		this.subscriber = subscriber;
-		this.blog = blog;
-		this.id = SubscriptionId.builder().subscriberId(subscriber.getId()).blogId(blog.getId()).build();
-		this.createdAt = LocalDateTime.now();
-	}
+    // 편의 생성자: builder 사용 시 createdAt 자동 세팅
+    @Builder
+    public SubscriptionEntity(UsersEntity subscriber, BlogsEntity blog) {
+        this.subscriber = subscriber;
+        this.blog       = blog;
+        this.id         = SubscriptionId.builder()
+                              .subscriberId(subscriber.getId())
+                              .blogId(blog.getId())
+                              .build();
+        this.createdAt  = LocalDateTime.now();
+    }
 }

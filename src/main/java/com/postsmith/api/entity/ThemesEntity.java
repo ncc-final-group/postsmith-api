@@ -8,27 +8,27 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ThemesEntity {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+   @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+   private Integer id;
 
-	@Column(name = "name", length = 255, nullable = false)
-	private String name; // 테마 이름
+   @Column(name = "name", length = 255, nullable = false)
+   private String name; // 테마 이름
 
-	@Column(name = "cover_image", length = 255, nullable = false)
-	private String coverImage = ""; // 커버 이미지 URI
+   @Column(name = "cover_image", length = 255, nullable = false)
+   private String coverImage = ""; // 커버 이미지 URI
 
-	@Column(name = "image", length = 255, nullable = false)
-	private String image = ""; // 테마 이미지 URI
+   @Column(name = "image", length = 255, nullable = false)
+   private String image = ""; // 테마 이미지 URI
 
-	@Column(name = "description", columnDefinition = "TEXT")
-	private String description; // 테마 설명
+   @Column(name = "description", columnDefinition = "TEXT")
+   private String description; // 테마 설명
 
-	@Column(name = "author", length = 255, nullable = false)
-	private String author; // 테마 제작자
+   @Column(name = "author", length = 255, nullable = false)
+   private String author; // 테마 제작자
 
-	@Column(name = "author_link", length = 255, nullable = false)
-	private String authorLink = ""; // 제작자 링크
+   @Column(name = "author_link", length = 255, nullable = false)
+   private String authorLink = ""; // 제작자 링크
 
 	@Column(name = "html", columnDefinition = "TEXT")
 	private String html; // 테마 내용

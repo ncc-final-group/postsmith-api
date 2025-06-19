@@ -32,4 +32,7 @@ public interface RepliesRepository extends JpaRepository<RepliesEntity, Integer>
 
 	@Query("SELECT COUNT(r) FROM RepliesEntity r WHERE r.content.id = :contentId")
 	int findTotalRepliesByContentId(@Param("contentId") Integer contentId);
+
+	 @Query("SELECT COUNT(r) FROM RepliesEntity r WHERE r.content.id = :contentId")
+	    int findTotalRepliesByContentId(@Param("contentId") Integer contentId);
 }
