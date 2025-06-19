@@ -11,7 +11,7 @@ import com.postsmith.api.domain.theme.service.ThemesService;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
+
 @RestController
 @RequestMapping("/api/themes")
 @RequiredArgsConstructor

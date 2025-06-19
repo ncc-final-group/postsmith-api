@@ -64,4 +64,14 @@ public interface BlogsRepository extends JpaRepository<BlogsEntity, Integer> {
 			""", nativeQuery = true)
 	int insertSubscription(@Param("subscriberId") Integer subscriberId, @Param("blogId") Integer blogId);
 
+	//kjh가 추가
+	@Query("""
+    SELECT b.address 
+    FROM BlogsEntity b 
+    WHERE b.user.id = :userId 
+    ORDER BY b.createdAt ASC
+    LIMIT 1
+""")
+	String findTopAddressByUserId(@Param("userId") Integer userId);
+
 }

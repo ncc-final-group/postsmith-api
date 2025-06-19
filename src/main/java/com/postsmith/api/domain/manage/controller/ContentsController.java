@@ -16,7 +16,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/contents")
 @RequiredArgsConstructor
-@CrossOrigin(origins = { "http://localhost:3000", "http://*.localhost:3000" }, allowCredentials = "true")
 
 @Slf4j
 public class ContentsController {

@@ -77,10 +77,17 @@ public interface ContentsRepository extends JpaRepository<ContentsEntity, Intege
 			"ORDER BY c.likes DESC")
 	List<ContentsEntity> findTop3ByLikes(Pageable pageable);
 
-	// 랜덤 7개 (공개글만)
 	@Query(value = "SELECT * FROM contents c " +
 			"WHERE c.is_public = true " +
 			"ORDER BY RAND() LIMIT 7", nativeQuery = true)
 	List<ContentsEntity> findRandom7PublicContents();
 
+	@Query(value = """
+    SELECT * FROM contents 
+    WHERE is_public = true 
+    AND id NOT IN (:excludeIds) 
+    ORDER BY RAND() 
+    LIMIT 7
+    """, nativeQuery = true)
+	List<ContentsEntity> findRandom7PublicContentsExcluding(@Param("excludeIds") List<Integer> excludeIds);
 }

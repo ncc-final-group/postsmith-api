@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import com.postsmith.api.domain.theme.dto.BlogsDto;
 import com.postsmith.api.domain.theme.service.BlogsService;
 
-@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:3001" })
+
 @RestController
 @RequestMapping("/api/blogs")
 @RequiredArgsConstructor

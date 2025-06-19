@@ -4,8 +4,8 @@ import com.postsmith.api.domain.content.dto.MainContentsDto;
 import com.postsmith.api.domain.content.service.MainContentsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +16,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("api/mainContents")
 @RequiredArgsConstructor
-@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:3001" })
 public class MainContentsController {
 
     private final MainContentsService mainContentsService;
@@ -26,6 +25,14 @@ public class MainContentsController {
         Map<String, List<MainContentsDto>> result = new HashMap<>();
         result.put("recommended", mainContentsService.getTop3RecommendedContents());
         result.put("latest", mainContentsService.getRandomRecentContents());
+
+
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/blog-address/{userId}")
+    public ResponseEntity<String> getBlogAddress(@PathVariable Integer userId) {
+        String address = mainContentsService.getBlogAddressByUserId(userId);
+        return ResponseEntity.ok(address);
     }
 }
