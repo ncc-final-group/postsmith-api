@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.postsmith.api.domain.theme.dto.BlogThemesDto;
+import com.postsmith.api.domain.theme.dto.BlogsDto;
 import com.postsmith.api.domain.theme.dto.ThemeTagsDto;
 import com.postsmith.api.domain.theme.dto.ThemesDto;
 import com.postsmith.api.domain.theme.service.ThemesService;
@@ -29,5 +31,12 @@ public class ThemesController {
 	@GetMapping("/a")
 	public ResponseEntity<List<ThemeTagsDto>> getAllThemes() {
 		return ResponseEntity.ok(themesService.getAllThemes());
+	}
+	
+	// 테마 적용
+	@PostMapping("/applyTheme/blogId/{blogId}/themeId/{themeId}")
+	public ResponseEntity<BlogThemesDto> applyTheme(@PathVariable("blogId") Integer blogId, @PathVariable("themeId") Integer themeId) {
+	    BlogThemesDto created = themesService.create(blogId, themeId);
+	    return ResponseEntity.ok(created);
 	}
 }
