@@ -41,7 +41,7 @@ spec:
             steps {
                 script {
                     env.STAGE_SEQUENCE = 0
-                    env.IMAGE_NAME = 'postsmith-hub.kr.ncr.ntruss.com/postsmith-blog'
+                    env.IMAGE_NAME = 'postsmith-hub.kr.ncr.ntruss.com/postsmith-api'
                     env.IMAGE_TAG = build.getProjectVersion('springboot')
                     withCredentials([file(credentialsId: 'postsmith_api_application_properties', variable: 'APPLICATION_PROPERTIES')]) {
                         sh 'cp -f ${APPLICATION_PROPERTIES} ./src/main/resources/application.properties'
