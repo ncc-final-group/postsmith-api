@@ -41,4 +41,8 @@ public class MediaEntity {
 		this.type = type;
 		this.size = size;
 	}
+	public void updateMediaInfo(String filename, String fileType) {
+		if (filename != null) this.name = filename;
+		if (fileType != null) this.type = fileType;
+	}
 }

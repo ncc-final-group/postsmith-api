@@ -1,18 +1,23 @@
 package com.postsmith.api.repository;
 
-import java.time.LocalDate;
-import java.util.List;
-
+import com.postsmith.api.domain.stats.dto.ViewDto;
+import com.postsmith.api.entity.ContentViewsEntity;
+import com.postsmith.api.entity.ContentsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.postsmith.api.entity.ContentViewsEntity;
-import com.postsmith.api.domain.stats.dto.ViewDto;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ContentViewsRepository extends JpaRepository<ContentViewsEntity, Integer> {
+    Optional<ContentViewsEntity> findByContentAndCreatedOn(ContentsEntity content, LocalDate createdOn);
+
+    @Query("SELECT COALESCE(SUM(cv.viewsCount), 0) FROM ContentViewsEntity cv WHERE cv.content = :content")
+    Integer getTotalViewsByContent(@Param("content") ContentsEntity content);
 	@Query("SELECT COALESCE(SUM(cv.viewsCount), 0) FROM ContentViewsEntity cv WHERE cv.content.id = :contentId")
 	int findTotalViewsByContentId(@Param("contentId") Integer contentId);
 

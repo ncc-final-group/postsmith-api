@@ -35,11 +35,21 @@ public class RepliesEntity {
 	@Column(name = "deleted_at", insertable = false, updatable = false)
 	private LocalDateTime deletedAt;
 
-	@Builder
-	public RepliesEntity(UsersEntity user, ContentsEntity content, RepliesEntity parentReply, String contentText) {
-		this.user = user;
-		this.content = content;
-		this.parentReply = parentReply;
-		this.contentText = contentText;
-	}
+    @Builder
+    public RepliesEntity(UsersEntity user, ContentsEntity content, RepliesEntity parentReply, String contentText) {
+        this.user = user;
+        this.content = content;
+        this.parentReply = parentReply;
+        this.contentText = contentText;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // deletedAt 설정을 위한 메서드 추가
+    public void markAsDeleted() {
+        this.deletedAt = LocalDateTime.now();
+    }
 }
