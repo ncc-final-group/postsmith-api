@@ -33,5 +33,10 @@
     "name": "ncp.object-storage.bucket-name",
     "type": "java.lang.String",
     "description": "Naver Cloud Platform Object Storage bucket name"
+  },
+  {
+    "name": "url.domain",
+    "type": "java.lang.String",
+    "description": "This is used to cookies to the specified domain."
   }
 ]}
