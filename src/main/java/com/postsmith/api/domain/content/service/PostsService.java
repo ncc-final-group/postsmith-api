@@ -1,8 +1,10 @@
 package com.postsmith.api.domain.content.service;
 
 import com.postsmith.api.domain.content.dto.PostsDto;
+
 import com.postsmith.api.entity.CategoriesEntity;
 import com.postsmith.api.entity.ContentsEntity;
+import com.postsmith.api.repository.BlogsRepository;
 import com.postsmith.api.repository.ContentViewsRepository;
 import com.postsmith.api.repository.ContentsRepository;
 import com.postsmith.api.repository.RepliesRepository;
@@ -22,11 +24,13 @@ public class PostsService {
 	private final ContentsRepository contentRepository;
 	private final ContentViewsRepository contentViewsRepository;
 	private final RepliesRepository repliesRepository;
+	private final BlogsRepository blogsRepository;
 
-	public PostsService(ContentsRepository contentRepository, ContentViewsRepository contentViewsRepository, RepliesRepository repliesRepository) {
+	public PostsService(ContentsRepository contentRepository, ContentViewsRepository contentViewsRepository, RepliesRepository repliesRepository, BlogsRepository blogsRepository) {
 		this.contentRepository = contentRepository;
 		this.contentViewsRepository = contentViewsRepository;
 		this.repliesRepository = repliesRepository;
+		this.blogsRepository =blogsRepository;
 	}
 
 	public List<PostsDto> getPostsByTypeAndBlogId(ContentsEntity.ContentEnum type, Long blogId) {
@@ -43,6 +47,7 @@ public class PostsService {
 			dto.setLikes(content.getLikes());
 			dto.setCreatedAt(content.getCreatedAt());
 			dto.setSequence(content.getSequence());
+			dto.setAddress(content.getBlog().getAddress());
 
 			CategoriesEntity category = content.getCategory();
 			if (category != null) {
@@ -86,5 +91,14 @@ public class PostsService {
 	public void updateIsPublicForContents(List<Integer> contentIds, Boolean isPublic) {
 		contentRepository.updateIsPublicByIds(contentIds, isPublic);
 	}
+
+	public Integer findBlogIdByAddress(String address) {
+	    return blogsRepository.findIdByAddress(address)
+	        .orElseThrow(() -> new IllegalArgumentException("주소에 해당하는 블로그가 없습니다: " + address));
+	}
+
+
+
+
 
 }

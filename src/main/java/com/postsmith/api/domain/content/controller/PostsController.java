@@ -1,6 +1,8 @@
 package com.postsmith.api.domain.content.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.postsmith.api.domain.content.dto.PostsDto;
 import com.postsmith.api.domain.content.dto.PrivacyUpdateRequestDto;
 import com.postsmith.api.domain.content.service.PostsService;
+
 import com.postsmith.api.entity.ContentsEntity;
 
 @RestController
@@ -48,6 +51,18 @@ public class PostsController {
 
 		return contentService.getPostsByTypeAndBlogId(contentType, blogId);
 	}
+	
+	
+	
+	@GetMapping("/blogid")
+	public ResponseEntity<Map<String, Integer>> getBlogIdByAddress(@RequestParam("address") String address) {
+	    Integer blogId = contentService.findBlogIdByAddress(address);
+	    Map<String, Integer> response = new HashMap<>();
+	    response.put("blogId", blogId);
+	    return ResponseEntity.ok(response);
+	}
+
+	
 
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<Void> deleteContent(@PathVariable("id") Integer id) {

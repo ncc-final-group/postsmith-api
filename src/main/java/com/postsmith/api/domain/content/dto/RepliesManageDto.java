@@ -16,4 +16,6 @@ public class RepliesManageDto {
 	private String ContentTitle;
 	private Integer ContentId;
 	private LocalDateTime CreatedAt;
+	private String address;
+	private Integer sequence;
 }
