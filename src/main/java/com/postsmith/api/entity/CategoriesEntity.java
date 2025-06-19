@@ -24,15 +24,23 @@ public class CategoriesEntity {
 	private String name; // 카테고리 이름
 
 	@Column(name = "sequence")
-	private Integer sequence; // 카테고리 배치 순서
+	private Integer sequence; // 카테고리 배치 순서                                                                                                                       
 
 	@Column(name = "description", columnDefinition = "TEXT")
 	private String description; // 카테고리 설명
 
 	@Builder
-	public CategoriesEntity(BlogsEntity blog, CategoriesEntity category, String name, Integer sequence, String description) {
+	public CategoriesEntity(BlogsEntity blog, CategoriesEntity parent, String name, Integer sequence, String description) {
 		this.blog = blog;
-		this.parent = category;
+		this.parent = parent;
+		this.sequence = sequence;
+		this.name = name;
+		this.description = description;
+	}
+
+	public void updateCategory(BlogsEntity blog, CategoriesEntity parent, String name, Integer sequence, String description) {
+		this.blog = blog;
+		this.parent = parent;
 		this.sequence = sequence;
 		this.name = name;
 		this.sequence = sequence;

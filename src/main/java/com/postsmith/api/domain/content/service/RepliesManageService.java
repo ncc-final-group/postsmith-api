@@ -43,6 +43,9 @@ public class RepliesManageService {
 			dto.setContentTitle(reply.getContent().getTitle());
 			dto.setContentId(reply.getContent().getId());
 			dto.setCreatedAt(reply.getCreatedAt());
+			dto.setSequence(reply.getContent().getSequence());
+			dto.setAddress(reply.getContent().getBlog().getAddress());
+			
 			return dto;
 		}).collect(Collectors.toList());
 	}

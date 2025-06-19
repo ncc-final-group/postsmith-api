@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:3001" })
+
 @RestController
 @RequestMapping("/api/feedContents")
 @RequiredArgsConstructor
@@ -22,5 +22,4 @@ public class FeedContentsController {
 	public List<FeedContentsDto> findFeedContents(@PathVariable("userId") Integer userId) {
 		return contentsService.findFeedContents(userId);
 	}
-
 }

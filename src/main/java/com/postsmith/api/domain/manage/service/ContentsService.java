@@ -128,4 +128,27 @@ public class ContentsService {
 	public List<ContentsEntity> searchContents(BlogsEntity blog, String keyword) {
 		return contentsRepository.findByBlogAndTitleContainingIgnoreCaseOrderBySequenceDesc(blog, keyword);
 	}
+
+	@Transactional(readOnly = true)
+	public List<ContentsResponseDto> getDraftContents(BlogsEntity blog, String type) {
+		List<ContentsEntity> draftContents;
+
+		if (type != null && !type.isEmpty()) {
+			// 특정 타입의 임시저장 콘텐츠만 조회
+			try {
+				ContentsEntity.ContentEnum contentType = ContentsEntity.ContentEnum.valueOf(type.toUpperCase());
+				draftContents = contentsRepository.findByBlogAndIsTempTrueAndTypeOrderBySequenceDesc(blog, contentType);
+			} catch (IllegalArgumentException e) {
+				log.warn("Invalid content type: {}, returning all drafts", type);
+				draftContents = contentsRepository.findByBlogAndIsTempTrueOrderBySequenceDesc(blog);
+			}
+		} else {
+			// 모든 타입의 임시저장 콘텐츠 조회
+			draftContents = contentsRepository.findByBlogAndIsTempTrueOrderBySequenceDesc(blog);
+		}
+
+		return draftContents.stream().map(ContentsEntity::toDto).toList();
+	}
+
+
 }

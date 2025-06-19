@@ -88,73 +88,73 @@ public class CategoryService {
 			return;
 		}
 
-		for (CategoryDto dto : updatedCategories) {
-			System.out.println("DTO id: " + dto.getId() + ", parentId: " + dto.getParentId() + ", blogId: " + dto.getBlogId() + ", name: " + dto.getName() + ", sequence: "
-					+ dto.getSequence() + ", description: " + dto.getDescription());
-		}
-
-		BlogsEntity blog = blogsRepository.findById(updatedCategories.get(0).getBlogId()).orElseThrow(() -> new RuntimeException("블로그가 존재하지 않습니다"));
-
-		// 기존 DB 데이터 불러오기
-		Map<Integer, CategoriesEntity> existingMap = categoriesRepository.findAll().stream().collect(Collectors.toMap(CategoriesEntity::getId, c -> c));
-
-		// 삭제할 것 찾기
-		Set<Integer> updatedIds = updatedCategories.stream().map(CategoryDto::getId).filter(Objects::nonNull).collect(Collectors.toSet());
-
-		Integer blogId = updatedCategories.stream().map(CategoryDto::getBlogId).filter(Objects::nonNull).findFirst()
+		Integer blogId = updatedCategories.stream()
+				.map(CategoryDto::getBlogId)
+				.filter(Objects::nonNull)
+				.findFirst()
 				.orElseThrow(() -> new IllegalArgumentException("모든 카테고리에서 blogId가 누락되었습니다."));
 
-		List<CategoriesEntity> toDelete = existingMap.values().stream().filter(e -> !updatedIds.contains(e.getId())).collect(Collectors.toList());
+		BlogsEntity blog = blogsRepository.findById(blogId)
+				.orElseThrow(() -> new RuntimeException("블로그가 존재하지 않습니다."));
+
+		// 기존 DB 데이터 불러오기
+		Map<Integer, CategoriesEntity> existingMap = categoriesRepository.findAll().stream()
+				.collect(Collectors.toMap(CategoriesEntity::getId, c -> c));
+
+		// 삭제 대상 계산
+		Set<Integer> updatedIds = updatedCategories.stream()
+				.map(CategoryDto::getId)
+				.filter(Objects::nonNull)
+				.collect(Collectors.toSet());
+
+		List<CategoriesEntity> toDelete = existingMap.values().stream()
+				.filter(entity -> !updatedIds.contains(entity.getId()))
+				.toList();
 		categoriesRepository.deleteAll(toDelete);
 
-		// 임시 ID → Entity 매핑
-		Map<Integer, CategoriesEntity> tempMap = new HashMap<>();
-		List<CategoriesEntity> toSave = new ArrayList<>();
+		// ID 기준 DTO 맵
+		Map<Integer, CategoryDto> dtoMap = updatedCategories.stream()
+				.filter(dto -> dto.getId() != null)
+				.collect(Collectors.toMap(CategoryDto::getId, dto -> dto));
 
 		// 1단계: Entity 생성 (parent 없이)
+		Map<Integer, CategoriesEntity> entityMap = new HashMap<>();
+		List<CategoriesEntity> toSave = new ArrayList<>();
+
 		for (CategoryDto dto : updatedCategories) {
 			CategoriesEntity entity;
-			boolean isNew = dto.getId() == null || dto.getId() < 0;
 
-			if (!isNew && existingMap.containsKey(dto.getId())) {
-				entity = existingMap.get(dto.getId());
-				entity = CategoriesEntity.builder().name(dto.getName()).description(dto.getDescription()).sequence(dto.getSequence()).build();
+			boolean isNew = dto.getId() == null || !existingMap.containsKey(dto.getId());
+			if (isNew) {
+				entity = dto.toEntity(blog, null); // parent는 이후 설정
 			} else {
-				entity = CategoriesEntity.builder().blog(blog).name(dto.getName()).description(dto.getDescription()).sequence(dto.getSequence()).build();
+				entity = existingMap.get(dto.getId());
+				entity.updateCategory(blog, null, dto.getName(), dto.getSequence(), dto.getDescription()); // parent 제외
 			}
 
-			tempMap.put(dto.getId(), entity);
+			entityMap.put(dto.getId(), entity);
 			toSave.add(entity);
 		}
 
-		// 먼저 저장해서 실제 DB ID 발급받기
-		categoriesRepository.saveAll(toSave);
+		categoriesRepository.saveAll(toSave); // 먼저 parent 없이 저장
 
 		// 2단계: 부모 설정
-//		toSave = new ArrayList<>();
 		for (CategoryDto dto : updatedCategories) {
-			CategoriesEntity entity = tempMap.get(dto.getId());
+			CategoriesEntity entity = entityMap.get(dto.getId());
 
 			CategoriesEntity parent = null;
 			Integer parentId = dto.getParentId();
-
 			if (parentId != null) {
-				parent = tempMap.get(parentId);
-				if (parent == null) {
-					parent = existingMap.get(parentId); // 기존 DB용
-				}
+				parent = entityMap.get(parentId);
+				if (parent == null) parent = existingMap.get(parentId); // 기존 DB에 있던 부모
 			}
-			
-			toSave.add(entity);
-//			entity.changeCategory(parent);
-		}
-		if (updatedCategories.get(0).getBlogId() == null) {
-			throw new IllegalArgumentException("카테고리에 blogId가 포함되지 않았습니다. 클라이언트에서 blogId를 명시해야 합니다.");
+
+			entity.updateCategory(blog, parent, dto.getName(), dto.getSequence(), dto.getDescription());
 		}
 
-		// 부모 설정 후 재저장
-		categoriesRepository.saveAll(toSave);
+		categoriesRepository.saveAll(toSave); // 최종 저장
 	}
+
 
 	public Map<Long, Long> getPostCounts(int blogId) {
 		List<Object[]> raw = categoriesRepository.countPostsByCategoryId(blogId);

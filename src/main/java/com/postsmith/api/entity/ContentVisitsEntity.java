@@ -2,6 +2,7 @@ package com.postsmith.api.entity;
 
 import java.time.LocalDateTime;
 
+import com.postsmith.api.domain.manage.dto.ContentVisitsDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class ContentVisitsEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
+	@Setter
 	private UsersEntity user; // FK > users.id
 
 	@Column(name = "ip", length = 12, nullable = false, columnDefinition = "CHAR(12)")
@@ -33,5 +35,20 @@ public class ContentVisitsEntity {
 		this.content = content;
 		this.user = user;
 		this.ip = ip;
+		this.createdAt = LocalDateTime.now();
+	}
+	public ContentVisitsDto toDto(){
+		Integer userId;
+		if(user == null){
+			userId = null;
+		} else {
+			userId = this.user.getId();
+		}
+		return ContentVisitsDto.builder()
+				.contentId(this.content.getId())
+				.userId(userId)
+				.ipAddress(this.ip)
+				.createdAt(this.createdAt)
+				.build();
 	}
 }
