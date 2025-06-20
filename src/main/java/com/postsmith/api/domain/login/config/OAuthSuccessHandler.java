@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 	@Value("${url.base}")
 	private String baseUrl;
-
+	
 	@Value("${url.domain}")
 	private String domain;
 
