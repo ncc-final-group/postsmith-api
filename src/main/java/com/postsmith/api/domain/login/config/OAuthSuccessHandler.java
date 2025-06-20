@@ -26,9 +26,6 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 	@Value("${url.domain}")
 	private String domain;
 
-	@Value("${url.domain}")
-	private String domain;
-
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 		String sessionId = null;
