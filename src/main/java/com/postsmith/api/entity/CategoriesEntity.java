@@ -43,7 +43,6 @@ public class CategoriesEntity {
 		this.parent = parent;
 		this.sequence = sequence;
 		this.name = name;
-		this.sequence = sequence;
 		this.description = description;
 	}
 }
