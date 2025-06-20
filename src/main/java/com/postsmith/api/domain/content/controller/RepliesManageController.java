@@ -28,9 +28,9 @@ public class RepliesManageController {
 		this.repliesManageService = repliesManageService;
 	}
 
-	@GetMapping
-	public List<RepliesManageDto> getReplies(@RequestParam("blogId") Long blogId) {
-		return repliesManageService.getRepliesByBlogId(blogId);
+	@GetMapping("/{blogId}")
+	public List<RepliesManageDto> getReplies(@PathVariable("blogId") Long blogId) {
+	    return repliesManageService.getRepliesByBlogId(blogId);
 	}
 
 	@PostMapping("/submitReply")
