@@ -79,7 +79,7 @@ public class FileUploadService {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
             log.info("파일 업로드 성공: {}", key);
-            return baseUrl + "/" + key;
+            return endpoint + "/" + bucketName + "/" + key;
 
         } catch (S3Exception e) {
             log.error("S3 업로드 실패: {}", e.getMessage());
