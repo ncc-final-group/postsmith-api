@@ -26,6 +26,9 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 	@Value("${url.domain}")
 	private String domain;
 
+	@Value("${url.domain}")
+	private String domain;
+
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 		String sessionId = null;
@@ -44,8 +47,9 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 //		cookie.setMaxAge(3600);
 //		cookie.setDomain("postsmith.kro.kr");
 //		response.addCookie(cookie);
-		ResponseCookie responseCookie = ResponseCookie.from("CLIENT_SESSION_ID", sessionId).path("/").httpOnly(true).secure(true).domain(domain).sameSite("None").build();
+		ResponseCookie responseCookie = ResponseCookie.from("CLIENT_SESSION_ID", sessionId).path("/").httpOnly(true).secure(true).domain("." + domain).sameSite("None").build();
 		response.addHeader("Set-Cookie", responseCookie.toString());
+		log.info("OAuth2 Authentication Success: " + authentication.getName());
 
 		response.sendRedirect(baseUrl);
 	}
