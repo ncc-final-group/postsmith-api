@@ -47,6 +47,12 @@ public class ThemesService {
 			.collect(Collectors.toList());
 	}
 	
+	public List<ThemeTagsDto> getAllThemesWithTag() {
+		List<Object[]> results = themeTagsRepository.findThemeTagsOrderByThemeCreatedAtDesc();
+
+		return results.stream().map(row -> ThemeTagsDto.fromEntity((ThemesEntity) row[0], (TagsEntity) row[1])).collect(Collectors.toList());
+	}
+	
 	@Transactional
 	public BlogThemesDto create(Integer blogId, Integer themeId) {
 	    BlogsEntity blog = blogsRepository.findById(blogId)
