@@ -49,13 +49,13 @@ public class FileUploadController {
             String fileUrl = fileUploadService.uploadImage(file);
             log.info("Object Storage 업로드 완료: {}", fileUrl);
             
-            // 데이터베이스에 미디어 정보 저장 (테스트용으로 blogId=1 고정)
-            Integer fixedBlogId = 1;
+            // 데이터베이스에 미디어 정보 저장
+            Integer actualBlogId = blogId != null ? blogId : 1; // blogId가 없으면 기본값 1 사용
             Integer mediaId = null;
-            log.info("테스트용 blogId 고정: 원본={}, 고정값={}", blogId, fixedBlogId);
+            log.info("blogId 사용: 전달받은={}, 실제사용={}", blogId, actualBlogId);
             
             MediaDto mediaDto = MediaDto.builder()
-                    .blogId(fixedBlogId)
+                    .blogId(actualBlogId)
                     .uri(fileUrl)
                     .filename(file.getOriginalFilename())
                     .fileType("image")
@@ -109,13 +109,13 @@ public class FileUploadController {
             String fileUrl = fileUploadService.uploadVideo(file);
             log.info("Object Storage 업로드 완료: {}", fileUrl);
             
-            // 데이터베이스에 미디어 정보 저장 (테스트용으로 blogId=1 고정)
-            Integer fixedBlogId = 1;
+            // 데이터베이스에 미디어 정보 저장
+            Integer actualBlogId = blogId != null ? blogId : 1; // blogId가 없으면 기본값 1 사용
             Integer mediaId = null;
-            log.info("테스트용 blogId 고정: 원본={}, 고정값={}", blogId, fixedBlogId);
+            log.info("blogId 사용: 전달받은={}, 실제사용={}", blogId, actualBlogId);
             
             MediaDto mediaDto = MediaDto.builder()
-                    .blogId(fixedBlogId)
+                    .blogId(actualBlogId)
                     .uri(fileUrl)
                     .filename(file.getOriginalFilename())
                     .fileType("video")
@@ -164,13 +164,13 @@ public class FileUploadController {
             String fileUrl = fileUploadService.uploadFile(file);
             log.info("Object Storage 업로드 완료: {}", fileUrl);
             
-            // 데이터베이스에 미디어 정보 저장 (테스트용으로 blogId=1 고정)
-            Integer fixedBlogId = 1;
+            // 데이터베이스에 미디어 정보 저장
+            Integer actualBlogId = blogId != null ? blogId : 1; // blogId가 없으면 기본값 1 사용
             Integer mediaId = null;
-            log.info("테스트용 blogId 고정: 원본={}, 고정값={}", blogId, fixedBlogId);
+            log.info("blogId 사용: 전달받은={}, 실제사용={}", blogId, actualBlogId);
             
             MediaDto mediaDto = MediaDto.builder()
-                    .blogId(fixedBlogId)
+                    .blogId(actualBlogId)
                     .uri(fileUrl)
                     .filename(displayName != null ? displayName : file.getOriginalFilename())
                     .fileType("file")
