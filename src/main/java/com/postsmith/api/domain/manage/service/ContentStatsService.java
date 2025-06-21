@@ -11,12 +11,14 @@ import com.postsmith.api.repository.ContentVisitsRepository;
 import com.postsmith.api.repository.ContentsRepository;
 import com.postsmith.api.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ContentStatsService {
     private final ContentViewsRepository contentViewsRepository;
@@ -29,15 +31,24 @@ public class ContentStatsService {
         if(opContent.isPresent()) {
             ContentsEntity content = opContent.get();
             LocalDate today = LocalDate.now();
-            ContentViewsEntity entity = contentViewsRepository.findByContentAndCreatedOn(content, today)
-                    .orElse(ContentViewsEntity.builder().content(content)
-                            .viewsCount(0)
-                            .createdOn(today)
-                            .build());
-            entity.incrementViewsCount();
-            return contentViewsRepository.save(entity).toDto();
+            Optional<ContentViewsEntity> entity = contentViewsRepository.findByContentAndCreatedOn(content, today);
+            if (entity.isEmpty()) {
+                // 오늘 날짜에 해당하는 조회 기록이 없으면 새로 생성
+                entity = Optional.of(ContentViewsEntity.builder()
+                        .content(content)
+                        .createdOn(today)
+                        .viewsCount(0)
+                        .build());
+                return contentViewsRepository.save(entity.get()).toDto();
+            }else{
+                // 오늘 날짜에 해당하는 조회 기록이 있으면 조회수 증가
+                ContentViewsEntity existingEntity = entity.get();
+                existingEntity.incrementViewsCount();
+                return contentViewsRepository.save(existingEntity).toDto();
+            }
         } else {
             throw new IllegalArgumentException("Content with id " + contentViewsDto.getContentId() + " does not exist.");
+
         }
     }
 
@@ -47,26 +58,33 @@ public class ContentStatsService {
             // Content 가 존재하면
             ContentsEntity content = opContent.get();
             // DTO 에서 사용자 ID를 가져와서 User 엔티티를 조회, 없으면 null로 설정
-            UsersEntity user;
+            UsersEntity user = null;
             if (dto.getUserId() != null) {
                 user = usersRepository.findById(dto.getUserId()).orElse(null);
-            } else {
-                user = null;
             }
-            // 오늘 날짜에 해당하는 방문 기록을 조회 ( 사용자 기반 또는 IP 기반 )
-            ContentVisitsEntity entity = contentVisitsRepository.findByUserAndCreatedOn(user, LocalDate.now())
-                    .orElseGet(() -> contentVisitsRepository.findByIpAndCreatedOn(dto.getIpAddress(), LocalDate.now())
-                            // IP 와 생성 날짜로 조회 후 user 가 없으면 user 설정
-                            .map(e -> {
-                                if(e.getUser() == null){
-                                    e.setUser(user); // IP 기반 방문 기록에 사용자 설정
-                                }
-                                return e;
-                            })
-                            // 방문이 없으면 새로 생성
-                    .orElse(ContentVisitsEntity.builder().content(content).user(user).ip(dto.getIpAddress())
-                            .build()));
-            return contentVisitsRepository.save(entity).toDto();
+            
+            // 중복 체크: 같은 IP와 오늘 날짜로 이미 방문 기록이 있는지 확인
+            Optional<ContentVisitsEntity> existingEntity = contentVisitsRepository.findByIpAndCreatedOn(dto.getIpAddress(), LocalDate.now());
+            
+            if(existingEntity.isEmpty()) {
+                // 오늘 처음 방문하는 경우 새 레코드 생성
+                ContentVisitsEntity newEntity = ContentVisitsEntity.builder()
+                        .content(content)
+                        .user(user)  // user는 null이거나 실제 사용자 엔티티
+                        .ip(dto.getIpAddress())
+                        .build();
+                return contentVisitsRepository.save(newEntity).toDto();
+            } else {
+                // 이미 방문 기록이 있는 경우
+                ContentVisitsEntity entity = existingEntity.get();
+                // 사용자 정보가 있고 기존 레코드에 사용자 정보가 없으면 업데이트
+                if (user != null && entity.getUser() == null) {
+                    entity.setUser(user);
+                    return contentVisitsRepository.save(entity).toDto();
+                }
+                // 이미 방문한 기록이므로 기존 데이터 반환
+                return entity.toDto();
+            }
         } else {
             throw new IllegalArgumentException("Content with id " + dto.getContentId() + " does not exist.");
         }
@@ -76,7 +94,10 @@ public class ContentStatsService {
         Optional<ContentsEntity> opContent = contentsRepository.findById(contentId);
         if(opContent.isPresent()) {
             ContentsEntity content = opContent.get();
-            return contentViewsRepository.getTotalViewsByContent(content);
+            ContentViewsEntity contentViewsEntity = contentViewsRepository.findByContentAndCreatedOn(content, LocalDate.now())
+                    .orElse(null);
+            log.info("Total views for content ID {}: {}", contentId, contentViewsEntity != null ? contentViewsEntity.getViewsCount() : 0);
+            return contentViewsEntity != null ? contentViewsEntity.getViewsCount() : 0;
         } else {
             throw new IllegalArgumentException("Content with id " + contentId + " does not exist.");
         }

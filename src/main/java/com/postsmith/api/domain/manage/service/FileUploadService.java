@@ -38,8 +38,6 @@ public class FileUploadService {
     @Value("${ncp.object-storage.endpoint}")
     private String endpoint;
 
-    private String baseUrl = endpoint + "/" + bucketName;
-
     private S3Client getS3Client() {
         AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(accessKey, secretKey);
         return S3Client.builder()

@@ -2,6 +2,7 @@ package com.postsmith.api.domain.theme.controller;
 
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/themes")
 @RequiredArgsConstructor
+@Slf4j
 public class ThemesController {
 
 	private final ThemesService themesService;
@@ -27,10 +29,16 @@ public class ThemesController {
 		return themesService.getThemeById(id);
 	}
 
-	// 모든 테마
+	// 모든 테마 - ThemesDto 리스트 반환
 	@GetMapping("/a")
-	public ResponseEntity<List<ThemeTagsDto>> getAllThemes() {
+	public ResponseEntity<List<ThemesDto>> getAllThemes() {
 		return ResponseEntity.ok(themesService.getAllThemes());
+	}
+	
+	// 모든 테마 - 태그랑 같
+	@GetMapping("/withTag")
+	public ResponseEntity<List<ThemeTagsDto>> getAllThemesWithTag() {
+		return ResponseEntity.ok(themesService.getAllThemesWithTag());
 	}
 	
 	// 테마 적용
