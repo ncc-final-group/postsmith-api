@@ -40,10 +40,11 @@ public class ThemesService {
 	}
 
 	// 모든 테마
-	public List<ThemeTagsDto> getAllThemes() {
-		List<Object[]> results = themeTagsRepository.findThemeTagsOrderByThemeCreatedAtDesc();
-
-		return results.stream().map(row -> ThemeTagsDto.fromEntity((ThemesEntity) row[0], (TagsEntity) row[1])).collect(Collectors.toList());
+	public List<ThemesDto> getAllThemes() {
+		List<ThemesEntity> results = themesRepository.findAll();
+		return results.stream()
+			.map(ThemesDto::fromEntity)
+			.collect(Collectors.toList());
 	}
 	
 	@Transactional
