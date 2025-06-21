@@ -35,6 +35,12 @@ public class ThemesController {
 		return ResponseEntity.ok(themesService.getAllThemes());
 	}
 	
+	// 모든 테마 - 태그랑 같
+	@GetMapping("/withTag")
+	public ResponseEntity<List<ThemeTagsDto>> getAllThemesWithTag() {
+		return ResponseEntity.ok(themesService.getAllThemesWithTag());
+	}
+	
 	// 테마 적용
 	@PostMapping("/applyTheme/blogId/{blogId}/themeId/{themeId}")
 	public ResponseEntity<BlogThemesDto> applyTheme(@PathVariable("blogId") Integer blogId, @PathVariable("themeId") Integer themeId) {
