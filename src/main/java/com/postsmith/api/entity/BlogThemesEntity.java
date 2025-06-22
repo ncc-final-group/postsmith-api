@@ -55,4 +55,11 @@ public class BlogThemesEntity {
 	public void setActive(Boolean isActive) {
 		this.isActive = isActive;
 	}
+	public void updateTheme(ThemesEntity theme){
+		if (theme != null) {
+			this.theme = theme;
+			this.themeHtml = theme.getHtml(); // 원본 HTML
+			this.themeCss = theme.getCss();   // 원본 CSS
+		}
+	}
 }

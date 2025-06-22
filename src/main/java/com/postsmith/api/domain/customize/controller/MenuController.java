@@ -38,6 +38,13 @@ public class MenuController {
 		return menuService.getMenus(blog);
 	}
 
+	@PostMapping("/add")
+	public ResponseEntity<MenuDto> addMenu(@RequestParam("blogId") int blogId, @RequestBody MenuDto menuDto) {
+		BlogsEntity blog = new BlogsEntity(blogId);
+		MenuDto savedMenu = menuService.addMenu(menuDto, blog);
+		return ResponseEntity.ok(savedMenu);
+	}
+
 	@PutMapping
 	public ResponseEntity<List<MenuDto>> saveMenus(@RequestParam("blogId") int blogId, @RequestBody List<MenuDto> menus) {
 		BlogsEntity blog = new BlogsEntity(blogId);

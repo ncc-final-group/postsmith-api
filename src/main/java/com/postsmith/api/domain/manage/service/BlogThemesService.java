@@ -46,25 +46,24 @@ public class BlogThemesService {
             BlogsEntity blog = blogService.findBlogById(blogId);
             ThemesEntity theme = themesRepository.findById(themeId)
                     .orElseThrow(() -> new IllegalArgumentException("Theme not found with id: " + themeId));
-            
-            // 기존 테마들 모두 비활성화
-            blogThemesRepository.deactivateAllByBlog(blog);
-            
-            // 새 테마 적용 (원본 HTML/CSS 사용)
-            BlogThemesEntity newBlogTheme = BlogThemesEntity.builder()
-                    .blog(blog)
-                    .theme(theme)
-                    .themeHtml(theme.getHtml()) // 원본 HTML
-                    .themeCss(theme.getCss())   // 원본 CSS
-                    .themeSetting(null)
-                    .isActive(true)
-                    .build();
-            
-            BlogThemesEntity savedTheme = blogThemesRepository.save(newBlogTheme);
-            log.info("Theme applied to blog: blogId={}, themeId={}", blogId, themeId);
-            
-            return BlogThemesDto.fromEntity(savedTheme);
-            
+
+            Optional<BlogThemesEntity> activeTheme = blogThemesRepository.findByBlogAndIsActiveTrue(blog);
+            if(activeTheme.isPresent()) {
+                // 이미 활성화된 테마가 있다면 비활성화
+                BlogThemesEntity existingTheme = activeTheme.get();
+                existingTheme.updateTheme(theme);
+                return BlogThemesDto.fromEntity(blogThemesRepository.save(existingTheme));
+            }else{
+                BlogThemesEntity newBlogTheme = BlogThemesEntity.builder()
+                        .blog(blog)
+                        .theme(theme)
+                        .themeHtml(theme.getHtml())
+                        .themeCss(theme.getCss())
+                        .themeSetting("")
+                        .isActive(true)
+                        .build();
+                return BlogThemesDto.fromEntity(blogThemesRepository.save(newBlogTheme));
+            }
         } catch (Exception e) {
             log.error("Error applying theme to blog: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to apply theme to blog: " + e.getMessage(), e);
