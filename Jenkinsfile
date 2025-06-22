@@ -38,6 +38,9 @@ spec:
 
     stages {
         stage('Initialize environment') {
+            when {
+                anyOf { branch 'main'; branch 'PR-*' }
+            }
             steps {
                 script {
                     env.STAGE_SEQUENCE = 0
@@ -50,6 +53,9 @@ spec:
             }
         }
         stage('Build gradle') {
+            when {
+                anyOf { branch 'main'; branch 'PR-*' }
+            }
             steps {
                 script {
                     github.setCommitStatus("Building Spring Boot application", "CI / gradle build", "PENDING")

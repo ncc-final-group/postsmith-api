@@ -76,18 +76,18 @@ public interface ContentsRepository extends JpaRepository<ContentsEntity, Intege
 	@Query("SELECT c FROM ContentsEntity c " +
 			"JOIN FETCH c.blog b " +
 			"LEFT JOIN FETCH c.category cat " +
-			"WHERE c.isPublic = true " +
+			"WHERE c.isPublic = true AND c.type='POSTS' " +
 			"ORDER BY c.likes DESC")
 	List<ContentsEntity> findTop3ByLikes(Pageable pageable);
 
 	@Query(value = "SELECT * FROM contents c " +
-			"WHERE c.is_public = true " +
+			"WHERE c.is_public = true AND c.type='POSTS' " +
 			"ORDER BY RAND() LIMIT 7", nativeQuery = true)
 	List<ContentsEntity> findRandom7PublicContents();
 
 	@Query(value = """
     SELECT * FROM contents 
-    WHERE is_public = true 
+    WHERE is_public = true AND type='POSTS'
     AND id NOT IN (:excludeIds) 
     ORDER BY RAND() 
     LIMIT 7
