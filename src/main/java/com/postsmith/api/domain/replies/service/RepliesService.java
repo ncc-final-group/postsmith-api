@@ -2,6 +2,7 @@ package com.postsmith.api.domain.replies.service;
 
 import com.postsmith.api.domain.replies.dto.RepliesCreateDto;
 import com.postsmith.api.domain.replies.dto.RepliesDto;
+import com.postsmith.api.domain.replies.dto.RepliesUpdateDto;
 import com.postsmith.api.entity.ContentsEntity;
 import com.postsmith.api.entity.RepliesEntity;
 import com.postsmith.api.entity.UsersEntity;
@@ -77,6 +78,31 @@ public class RepliesService {
     }
 
     /**
+     * 댓글 수정
+     */
+    public RepliesDto updateReply(Integer replyId, RepliesUpdateDto updateDto) {
+        RepliesEntity reply = repliesRepository.findById(replyId)
+                .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다: " + replyId));
+
+        // 작성자 확인
+        if (!reply.getUser().getId().equals(updateDto.getUserId())) {
+            throw new IllegalArgumentException("댓글 수정 권한이 없습니다.");
+        }
+
+        // 삭제된 댓글인지 확인
+        if (reply.getDeletedAt() != null) {
+            throw new IllegalArgumentException("삭제된 댓글은 수정할 수 없습니다.");
+        }
+
+        // 댓글 내용 수정
+        setContentText(reply, updateDto.getContentText());
+        setUpdatedAt(reply, LocalDateTime.now());
+        
+        RepliesEntity savedReply = repliesRepository.save(reply);
+        return RepliesDto.fromEntity(savedReply);
+    }
+
+    /**
      * 댓글 삭제 (soft delete)
      */
     public void deleteReply(Integer replyId, Integer userId) {
@@ -112,6 +138,28 @@ public class RepliesService {
             field.set(reply, deletedAt);
         } catch (Exception e) {
             System.out.println("Failed to set deletedAt: " + e.getMessage());
+        }
+    }
+
+    // Helper method for setting contentText via reflection
+    private void setContentText(RepliesEntity reply, String contentText) {
+        try {
+            java.lang.reflect.Field field = RepliesEntity.class.getDeclaredField("contentText");
+            field.setAccessible(true);
+            field.set(reply, contentText);
+        } catch (Exception e) {
+            System.out.println("Failed to set contentText: " + e.getMessage());
+        }
+    }
+
+    // Helper method for setting updatedAt via reflection
+    private void setUpdatedAt(RepliesEntity reply, LocalDateTime updatedAt) {
+        try {
+            java.lang.reflect.Field field = RepliesEntity.class.getDeclaredField("updatedAt");
+            field.setAccessible(true);
+            field.set(reply, updatedAt);
+        } catch (Exception e) {
+            System.out.println("Failed to set updatedAt: " + e.getMessage());
         }
     }
 }
