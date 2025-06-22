@@ -16,6 +16,7 @@ public class ContentsResponseDto {
 	private String title;
 	private String contentHtml;
 	private String contentPlain;
+	private String thumbnail; // 썸네일 이미지 URL
 	private String postType; // "POSTS" or "PAGES"
 	private Boolean isTemp; // Temporary post
 	private Boolean isPublic; // Public visibility

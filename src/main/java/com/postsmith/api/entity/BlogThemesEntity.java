@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "blog_themes")
+@Table(name = "blog_themes", uniqueConstraints = {
+	@UniqueConstraint(columnNames = {"blog_id", "theme_id"})
+})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BlogThemesEntity {
@@ -55,6 +57,22 @@ public class BlogThemesEntity {
 	public void setActive(Boolean isActive) {
 		this.isActive = isActive;
 	}
+	
+	// 활성화 상태 업데이트
+	public void updateIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+	
+	// 테마 HTML 업데이트
+	public void updateThemeHtml(String themeHtml) {
+		if (themeHtml != null) this.themeHtml = themeHtml;
+	}
+	
+	// 테마 CSS 업데이트
+	public void updateThemeCss(String themeCss) {
+		if (themeCss != null) this.themeCss = themeCss;
+	}
+	
 	public void updateTheme(ThemesEntity theme){
 		if (theme != null) {
 			this.theme = theme;

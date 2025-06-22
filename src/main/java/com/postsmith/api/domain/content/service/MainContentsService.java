@@ -27,6 +27,7 @@ public class MainContentsService {
         dto.setContentHtml(entity.getContentHtml());
         dto.setTitle(entity.getTitle());
         dto.setContentPlain(entity.getContentPlain());
+        dto.setThumbnail(entity.getThumbnail()); // 썸네일 추가
         dto.setLikes(entity.getLikes());
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());

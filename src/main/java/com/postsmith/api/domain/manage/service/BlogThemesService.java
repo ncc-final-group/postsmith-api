@@ -80,21 +80,11 @@ public class BlogThemesService {
             BlogThemesEntity activeTheme = blogThemesRepository.findByBlogAndIsActiveTrue(blog)
                     .orElseThrow(() -> new IllegalArgumentException("No active theme found for blog: " + blogId));
             
-            // 새로운 BlogThemesEntity 생성 (기존 것을 업데이트하는 방식)
-            BlogThemesEntity updatedTheme = BlogThemesEntity.builder()
-                    .blog(activeTheme.getBlog())
-                    .theme(activeTheme.getTheme())
-                    .themeHtml(themeHtml != null ? themeHtml : activeTheme.getThemeHtml())
-                    .themeCss(themeCss != null ? themeCss : activeTheme.getThemeCss())
-                    .themeSetting(activeTheme.getThemeSetting())
-                    .isActive(true)
-                    .build();
+            // 기존 테마 엔티티 업데이트 (삭제-생성 대신 직접 수정)
+            activeTheme.updateThemeContent(themeHtml, themeCss);
             
-            // 기존 테마 삭제
-            blogThemesRepository.delete(activeTheme);
-            
-            // 새로운 테마 저장
-            BlogThemesEntity savedTheme = blogThemesRepository.save(updatedTheme);
+            // 업데이트된 테마 저장 (동일한 엔티티)
+            BlogThemesEntity savedTheme = blogThemesRepository.save(activeTheme);
             
             log.info("Blog theme content updated: blogId={}", blogId);
             
@@ -116,21 +106,11 @@ public class BlogThemesService {
             BlogThemesEntity activeTheme = blogThemesRepository.findByBlogAndIsActiveTrue(blog)
                     .orElseThrow(() -> new IllegalArgumentException("No active theme found for blog: " + blogId));
             
-            // 새로운 BlogThemesEntity 생성
-            BlogThemesEntity updatedTheme = BlogThemesEntity.builder()
-                    .blog(activeTheme.getBlog())
-                    .theme(activeTheme.getTheme())
-                    .themeHtml(activeTheme.getThemeHtml())
-                    .themeCss(activeTheme.getThemeCss())
-                    .themeSetting(themeSetting)
-                    .isActive(true)
-                    .build();
+            // 기존 테마 엔티티 업데이트 (삭제-생성 대신 직접 수정)
+            activeTheme.updateThemeSetting(themeSetting);
             
-            // 기존 테마 삭제
-            blogThemesRepository.delete(activeTheme);
-            
-            // 새로운 테마 저장
-            BlogThemesEntity savedTheme = blogThemesRepository.save(updatedTheme);
+            // 업데이트된 테마 저장 (동일한 엔티티)
+            BlogThemesEntity savedTheme = blogThemesRepository.save(activeTheme);
             
             log.info("Blog theme setting updated: blogId={}", blogId);
             

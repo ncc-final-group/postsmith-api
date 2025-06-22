@@ -60,13 +60,14 @@ public class ThemesService {
 	    ThemesEntity theme = themesRepository.findById(themeId)
 	        .orElseThrow(() -> new RuntimeException("테마를 찾을 수 없습니다."));
 
-	    List<BlogThemesEntity> existing = blogThemesRepository.findByBlogAndIsActiveTrue(blog)
-	        .stream()
-	        .filter(bt -> bt.getTheme().getId().equals(themeId))
-	        .toList();
+	    // 기존 활성 테마 조회
+	    List<BlogThemesEntity> existingActiveThemes = blogThemesRepository.findByBlogAndIsActiveTrue(blog)
+	        .stream().toList();
 
-	    if (!existing.isEmpty()) {
-	        BlogThemesEntity existingTheme = existing.get(0);
+	    // 동일한 테마가 이미 활성화되어 있는지 확인
+	    for (BlogThemesEntity existingTheme : existingActiveThemes) {
+	        if (existingTheme.getTheme().getId().equals(themeId)) {
+	            // 이미 같은 테마가 활성화되어 있으면 그대로 반환
 	        return new BlogThemesDto(
 	            existingTheme.getId(),
 	            blogId,
@@ -75,25 +76,53 @@ public class ThemesService {
 	            existingTheme.getIsActive()
 	        );
 	    }
+	    }
 
-	    blogThemesRepository.deactivateAllThemesByBlog(blog);
-
+	    // 기존 활성 테마가 있으면 업데이트, 없으면 새로 생성
+	    if (!existingActiveThemes.isEmpty()) {
+	        // 첫 번째 활성 테마를 새로운 테마로 업데이트
+	        BlogThemesEntity existingTheme = existingActiveThemes.get(0);
+	        existingTheme.updateTheme(theme);
+	        existingTheme.updateThemeHtml(theme.getHtml());
+	        existingTheme.updateThemeCss(theme.getCss());
+	        existingTheme.updateThemeSetting("");
+	        
+	        // 나머지 활성 테마들은 비활성화
+	        for (int i = 1; i < existingActiveThemes.size(); i++) {
+	            existingActiveThemes.get(i).updateIsActive(false);
+	            blogThemesRepository.save(existingActiveThemes.get(i));
+	        }
+	        
+	        BlogThemesEntity savedTheme = blogThemesRepository.save(existingTheme);
+	        
+	        return new BlogThemesDto(
+	            savedTheme.getId(),
+	            blogId,
+	            themeId,
+	            savedTheme.getThemeSetting(),
+	            savedTheme.getIsActive()
+	        );
+	    } else {
+	        // 활성 테마가 없으면 새로 생성
 	    BlogThemesEntity newTheme = BlogThemesEntity.builder()
 	        .blog(blog)
 	        .theme(theme)
-	        .themeSetting(theme.getHtml())
+	            .themeHtml(theme.getHtml())
+	            .themeCss(theme.getCss())
+	            .themeSetting("")
 	        .isActive(true)
 	        .build();
 
-	    blogThemesRepository.save(newTheme);
+	        BlogThemesEntity savedTheme = blogThemesRepository.save(newTheme);
 
 	    return new BlogThemesDto(
-	        newTheme.getId(),
+	            savedTheme.getId(),
 	        blogId,
 	        themeId,
-	        newTheme.getThemeSetting(),
-	        newTheme.getIsActive()
+	            savedTheme.getThemeSetting(),
+	            savedTheme.getIsActive()
 	    );
+	    }
 	}
 
 
