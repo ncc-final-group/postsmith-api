@@ -13,7 +13,7 @@ import lombok.*;
 public class ContentsEntity {
 	public ContentsResponseDto toDto() {
 		return ContentsResponseDto.builder().id(this.id).categoryId(this.category != null ? this.category.getId() : null).blogId(this.blog.getId()).sequence(this.sequence)
-				.postType(this.type.name()).title(this.title).contentHtml(this.contentHtml).contentPlain(this.contentPlain).isTemp(this.isTemp).isPublic(this.isPublic)
+				.postType(this.type.name()).title(this.title).contentHtml(this.contentHtml).contentPlain(this.contentPlain).thumbnail(this.thumbnail).isTemp(this.isTemp).isPublic(this.isPublic)
 				.likes(this.likes != null ? this.likes : 0).createdAt(this.createdAt).updatedAt(this.updatedAt).build();
 	}
 
@@ -49,6 +49,9 @@ public class ContentsEntity {
 	@Column(name = "content_plain", columnDefinition = "TEXT")
 	private String contentPlain; // 태그를 뺀 텍스트
 
+	@Column(name = "thumbnail", columnDefinition = "TEXT")
+	private String thumbnail; // 컨텐츠 썸네일 이미지 URL
+
 	@Column(name = "is_temp")
 	private Boolean isTemp; // 컨텐츠 임시 저장 여부
 
@@ -65,7 +68,7 @@ public class ContentsEntity {
 	private LocalDateTime updatedAt;
 
 	@Builder
-	public ContentsEntity(CategoriesEntity category, BlogsEntity blog, Integer sequence, ContentEnum type, String title, String contentHtml, String contentPlain, Boolean isTemp,
+	public ContentsEntity(CategoriesEntity category, BlogsEntity blog, Integer sequence, ContentEnum type, String title, String contentHtml, String contentPlain, String thumbnail, Boolean isTemp,
 			Boolean isPublic, Integer likes) {
 		this.category = category;
 		this.blog = blog;
@@ -74,6 +77,7 @@ public class ContentsEntity {
 		this.title = title;
 		this.contentHtml = contentHtml;
 		this.contentPlain = contentPlain;
+		this.thumbnail = thumbnail;
 		this.isTemp = isTemp;
 		this.isPublic = isPublic;
 		this.likes = likes;
@@ -91,10 +95,11 @@ public class ContentsEntity {
 	}
 
 	// 업데이트를 위한 메서드들
-	public void updateContent(String title, String contentHtml, String contentPlain, Boolean isTemp, Boolean isPublic) {
+	public void updateContent(String title, String contentHtml, String contentPlain, String thumbnail, Boolean isTemp, Boolean isPublic) {
 		this.title = title;
 		this.contentHtml = contentHtml;
 		this.contentPlain = contentPlain;
+		this.thumbnail = thumbnail;
 		this.isTemp = isTemp;
 		this.isPublic = isPublic;
 	}

@@ -47,7 +47,7 @@ public class ContentsService {
 
 			// ContentsEntity 생성
 			ContentsEntity content = ContentsEntity.builder().blog(blog).category(category).sequence(nextSequence).type(contentType).title(dto.getTitle())
-					.contentHtml(dto.getContent()).contentPlain(plainContent).isTemp(dto.getIsTemp()).isPublic(dto.getIsPublic()).likes(0).build();
+					.contentHtml(dto.getContent()).contentPlain(plainContent).thumbnail(dto.getThumbnail()).isTemp(dto.getIsTemp()).isPublic(dto.getIsPublic()).likes(0).build();
 
 			// 생성 시간 설정 (Entity의 @PrePersist가 없다면 수동 설정)
 			ContentsResponseDto savedContent = contentsRepository.save(content).toDto();
@@ -108,7 +108,7 @@ public class ContentsService {
 
 		// 콘텐츠 내용 업데이트
 		content.updateContent(dto.getTitle() != null ? dto.getTitle() : content.getTitle(), dto.getContent() != null ? dto.getContent() : content.getContentHtml(), plainContent,
-				dto.getIsTemp() != null ? dto.getIsTemp() : content.getIsTemp(), dto.getIsPublic() != null ? dto.getIsPublic() : content.getIsPublic());
+				dto.getThumbnail() != null ? dto.getThumbnail() : content.getThumbnail(), dto.getIsTemp() != null ? dto.getIsTemp() : content.getIsTemp(), dto.getIsPublic() != null ? dto.getIsPublic() : content.getIsPublic());
 
 		ContentsEntity savedContent = contentsRepository.save(content);
 

@@ -22,6 +22,7 @@ public class ContentsDto {
 	private String title;
 	private String contentHtml;
 	private String contentPlain;
+	private String thumbnail; // 썸네일 이미지 URL
 	private Boolean isTemp;
 	private Boolean isPublic;
 	private Integer likes;
@@ -44,6 +45,7 @@ public class ContentsDto {
 				.title(entity.getTitle())
 				.contentHtml(entity.getContentHtml())
 				.contentPlain(entity.getContentPlain())
+				.thumbnail(entity.getThumbnail())
 				.isTemp(entity.getIsTemp())
 				.isPublic(entity.getIsPublic())
 				.likes(entity.getLikes())
@@ -54,6 +56,6 @@ public class ContentsDto {
 
 	public ContentsEntity toEntity(CategoriesEntity category, BlogsEntity blog) {
 		return ContentsEntity.builder().category(category).blog(blog).sequence(this.sequence).type(this.type).title(this.title).contentHtml(this.contentHtml)
-				.contentPlain(this.contentPlain).isTemp(this.isTemp).isPublic(this.isPublic).likes(this.likes).build();
+				.contentPlain(this.contentPlain).thumbnail(this.thumbnail).isTemp(this.isTemp).isPublic(this.isPublic).likes(this.likes).build();
 	}
 }
