@@ -74,19 +74,32 @@ public class BlogThemesService {
     @Transactional
     public BlogThemesDto updateBlogThemeContent(Integer blogId, String themeHtml, String themeCss) {
         try {
+            log.info("=== Blog Theme Content Update ===");
+            log.info("BlogId: {}", blogId);
+            log.info("ThemeHtml length: {}", themeHtml != null ? themeHtml.length() : 0);
+            log.info("ThemeCss length: {}", themeCss != null ? themeCss.length() : 0);
+            if (themeCss != null && themeCss.length() > 0) {
+                log.info("ThemeCss preview: {}", themeCss.substring(0, Math.min(100, themeCss.length())) + "...");
+            }
+            
             BlogsEntity blog = blogService.findBlogById(blogId);
             
             // 현재 활성 테마 조회
             BlogThemesEntity activeTheme = blogThemesRepository.findByBlogAndIsActiveTrue(blog)
                     .orElseThrow(() -> new IllegalArgumentException("No active theme found for blog: " + blogId));
             
+            log.info("Before update - Current theme CSS length: {}", activeTheme.getThemeCss() != null ? activeTheme.getThemeCss().length() : 0);
+            
             // 기존 테마 엔티티 업데이트 (삭제-생성 대신 직접 수정)
             activeTheme.updateThemeContent(themeHtml, themeCss);
+            
+            log.info("After updateThemeContent - Theme CSS length: {}", activeTheme.getThemeCss() != null ? activeTheme.getThemeCss().length() : 0);
             
             // 업데이트된 테마 저장 (동일한 엔티티)
             BlogThemesEntity savedTheme = blogThemesRepository.save(activeTheme);
             
-            log.info("Blog theme content updated: blogId={}", blogId);
+            log.info("After save - Saved theme CSS length: {}", savedTheme.getThemeCss() != null ? savedTheme.getThemeCss().length() : 0);
+            log.info("Blog theme content updated successfully: blogId={}", blogId);
             
             return BlogThemesDto.fromEntity(savedTheme);
             

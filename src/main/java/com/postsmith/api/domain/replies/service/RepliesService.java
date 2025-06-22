@@ -53,10 +53,7 @@ public class RepliesService {
                 .contentText(createDto.getContentText())
                 .build();
 
-        // 생성 시간 설정 (Entity에 @PrePersist가 없다면 수동 설정)
-        setCreatedAt(reply, LocalDateTime.now());
-
-        // 댓글 저장
+        // 댓글 저장 (@PrePersist에서 createdAt 자동 설정)
         RepliesEntity savedReply = repliesRepository.save(reply);
         
         return RepliesDto.fromEntity(savedReply);
@@ -70,7 +67,7 @@ public class RepliesService {
         ContentsEntity content = contentsRepository.findById(contentId)
                 .orElseThrow(() -> new IllegalArgumentException("콘텐츠를 찾을 수 없습니다: " + contentId));
 
-        List<RepliesEntity> replies = repliesRepository.findByContentAndDeletedAtIsNullOrderByCreatedAtAsc(content);
+        List<RepliesEntity> replies = repliesRepository.findByContentOrderByCreatedAtAsc(content);
         
         return replies.stream()
                 .map(RepliesDto::fromEntity)
@@ -98,8 +95,8 @@ public class RepliesService {
         setContentText(reply, updateDto.getContentText());
         setUpdatedAt(reply, LocalDateTime.now());
         
-        RepliesEntity savedReply = repliesRepository.save(reply);
-        return RepliesDto.fromEntity(savedReply);
+        RepliesEntity updatedReply = repliesRepository.save(reply);
+        return RepliesDto.fromEntity(updatedReply);
     }
 
     /**
@@ -114,32 +111,15 @@ public class RepliesService {
             throw new IllegalArgumentException("댓글 삭제 권한이 없습니다.");
         }
 
-        // soft delete 처리
-        setDeletedAt(reply, LocalDateTime.now());
+        // soft delete 처리 - Entity의 markAsDeleted 메서드 사용
+        reply.markAsDeleted();
         repliesRepository.save(reply);
+        
+        // 로그 추가하여 삭제 상태 확인
+        System.out.println("댓글 삭제 처리됨: ID=" + replyId + ", deletedAt=" + reply.getDeletedAt());
     }
 
-    // Helper method for setting createdAt via reflection
-    private void setCreatedAt(RepliesEntity reply, LocalDateTime createdAt) {
-        try {
-            java.lang.reflect.Field field = RepliesEntity.class.getDeclaredField("createdAt");
-            field.setAccessible(true);
-            field.set(reply, createdAt);
-        } catch (Exception e) {
-            System.out.println("Failed to set createdAt: " + e.getMessage());
-        }
-    }
 
-    // Helper method for setting deletedAt via reflection
-    private void setDeletedAt(RepliesEntity reply, LocalDateTime deletedAt) {
-        try {
-            java.lang.reflect.Field field = RepliesEntity.class.getDeclaredField("deletedAt");
-            field.setAccessible(true);
-            field.set(reply, deletedAt);
-        } catch (Exception e) {
-            System.out.println("Failed to set deletedAt: " + e.getMessage());
-        }
-    }
 
     // Helper method for setting contentText via reflection
     private void setContentText(RepliesEntity reply, String contentText) {

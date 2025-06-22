@@ -16,6 +16,9 @@ public interface RepliesRepository extends JpaRepository<RepliesEntity, Integer>
 	// 콘텐츠별 댓글 조회 (삭제되지 않은 것만)
 	List<RepliesEntity> findByContentAndDeletedAtIsNullOrderByCreatedAtAsc(ContentsEntity content);
 
+	// 콘텐츠별 댓글 조회 (삭제된 것 포함)
+	List<RepliesEntity> findByContentOrderByCreatedAtAsc(ContentsEntity content);
+
 	// 부모 댓글별 대댓글 조회 (삭제되지 않은 것만)
 	List<RepliesEntity> findByParentReplyAndDeletedAtIsNullOrderByCreatedAtAsc(RepliesEntity parentReply);
 

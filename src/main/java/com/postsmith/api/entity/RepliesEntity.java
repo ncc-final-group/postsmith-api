@@ -29,10 +29,10 @@ public class RepliesEntity {
 	@Column(name = "content", columnDefinition = "TEXT")
 	private String contentText; // 댓글 내용
 
-	@Column(name = "created_at", insertable = false, updatable = false)
+	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;
 
-	@Column(name = "deleted_at", insertable = false, updatable = false)
+	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
 
     @Builder

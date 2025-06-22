@@ -61,6 +61,9 @@ public class ContentsEntity {
 	@Column(name = "likes")
 	private Integer likes; // 좋아요 수
 
+	@Column(name = "is_important")
+	private Boolean isImportant; // 중요 컨텐츠 여부
+
 	@Column(name = "created_at", insertable = false, updatable = false)
 	private LocalDateTime createdAt;
 
@@ -69,7 +72,7 @@ public class ContentsEntity {
 
 	@Builder
 	public ContentsEntity(CategoriesEntity category, BlogsEntity blog, Integer sequence, ContentEnum type, String title, String contentHtml, String contentPlain, String thumbnail, Boolean isTemp,
-			Boolean isPublic, Integer likes) {
+			Boolean isPublic, Boolean isImportant, Integer likes) {
 		this.category = category;
 		this.blog = blog;
 		this.sequence = sequence;
@@ -81,6 +84,7 @@ public class ContentsEntity {
 		this.isTemp = isTemp;
 		this.isPublic = isPublic;
 		this.likes = likes;
+		this.isImportant = isImportant;
 	}
 
 	@PrePersist
@@ -102,6 +106,7 @@ public class ContentsEntity {
 		this.thumbnail = thumbnail;
 		this.isTemp = isTemp;
 		this.isPublic = isPublic;
+		this.isImportant = isImportant;
 	}
 
 	public void updateCategory(CategoriesEntity category) {

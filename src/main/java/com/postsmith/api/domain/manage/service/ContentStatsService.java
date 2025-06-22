@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,9 +37,9 @@ public class ContentStatsService {
                 contentViewsRepository.upsertViewCount(contentViewsDto.getContentId());
                 
                 // 업데이트된 결과를 조회해서 반환
-                ContentsEntity content = opContent.get();
-                LocalDate today = LocalDate.now();
-                Optional<ContentViewsEntity> entity = contentViewsRepository.findByContentAndCreatedOn(content, today);
+            ContentsEntity content = opContent.get();
+            LocalDate today = LocalDate.now();
+            Optional<ContentViewsEntity> entity = contentViewsRepository.findByContentAndCreatedOn(content, today);
                 
                 if (entity.isPresent()) {
                     return entity.get().toDto();
@@ -46,7 +48,7 @@ public class ContentStatsService {
                     return ContentViewsDto.builder()
                             .contentId(contentViewsDto.getContentId())
                             .viewsCount(1)
-                            .createdOn(today)
+                        .createdOn(today)
                             .build();
                 }
             } catch (Exception e) {
@@ -61,18 +63,20 @@ public class ContentStatsService {
     public ContentVisitsDto recordVisit(ContentVisitsDto dto) {
         Optional<ContentsEntity> opContent = contentsRepository.findById(dto.getContentId());
         if(opContent.isPresent()) {
+            try {
             // Content 가 존재하면
             ContentsEntity content = opContent.get();
+
             // DTO 에서 사용자 ID를 가져와서 User 엔티티를 조회, 없으면 null로 설정
             UsersEntity user = null;
             if (dto.getUserId() != null) {
                 user = usersRepository.findById(dto.getUserId()).orElse(null);
             }
             
-            // 중복 체크: 같은 IP와 오늘 날짜로 이미 방문 기록이 있는지 확인
-            Optional<ContentVisitsEntity> existingEntity = contentVisitsRepository.findByIpAndCreatedOn(dto.getIpAddress(), LocalDate.now());
+                // 중복 체크: 같은 IP, 오늘 날짜, 그리고 같은 게시글로 이미 방문 기록이 있는지 확인
+                List<ContentVisitsEntity> existingEntities = contentVisitsRepository.findByContentAndIpAndCreatedOn(content, dto.getIpAddress(), LocalDate.now());
             
-            if(existingEntity.isEmpty()) {
+                if(existingEntities.isEmpty()) {
                 // 오늘 처음 방문하는 경우 새 레코드 생성
                 ContentVisitsEntity newEntity = ContentVisitsEntity.builder()
                         .content(content)
@@ -81,15 +85,18 @@ public class ContentStatsService {
                         .build();
                 return contentVisitsRepository.save(newEntity).toDto();
             } else {
-                // 이미 방문 기록이 있는 경우
-                ContentVisitsEntity entity = existingEntity.get();
-                // 사용자 정보가 있고 기존 레코드에 사용자 정보가 없으면 업데이트
-                if (user != null && entity.getUser() == null) {
-                    entity.setUser(user);
-                    return contentVisitsRepository.save(entity).toDto();
+                    // 이미 방문 기록이 있는 경우 첫 번째 기록의 DTO를 반환
+                    return existingEntities.get(0).toDto();
                 }
-                // 이미 방문한 기록이므로 기존 데이터 반환
-                return entity.toDto();
+            } catch (Exception e) {
+                log.error("Failed to record visit for contentId: {}, ip: {}", dto.getContentId(), dto.getIpAddress(), e);
+                // 오류가 발생해도 기본 응답을 반환하여 클라이언트 오류를 방지
+                return ContentVisitsDto.builder()
+                        .contentId(dto.getContentId())
+                        .userId(dto.getUserId())
+                        .ipAddress(dto.getIpAddress())
+                        .createdAt(LocalDateTime.now())
+                        .build();
             }
         } else {
             throw new IllegalArgumentException("Content with id " + dto.getContentId() + " does not exist.");

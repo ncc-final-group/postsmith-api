@@ -2,6 +2,7 @@ package com.postsmith.api.repository;
 
 import com.postsmith.api.domain.stats.dto.VisitDto;
 import com.postsmith.api.entity.ContentVisitsEntity;
+import com.postsmith.api.entity.ContentsEntity;
 import com.postsmith.api.entity.UsersEntity;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -40,4 +41,6 @@ public interface ContentVisitsRepository extends JpaRepository<ContentVisitsEnti
 			+ "WHERE c.id = :contentId " + "GROUP BY DATE(cv.createdAt), c.id " + "ORDER BY DATE(cv.createdAt)")
 	List<VisitDto> findVisitorsByContentIdGroupByDate(@Param("contentId") Integer contentId);
 
+	@Query("SELECT cv FROM ContentVisitsEntity cv WHERE cv.content = :content AND cv.ip = :ip AND DATE(cv.createdAt) = :createdOn")
+	List<ContentVisitsEntity> findByContentAndIpAndCreatedOn(ContentsEntity content, String ip, LocalDate createdOn);
 }
