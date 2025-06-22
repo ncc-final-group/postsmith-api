@@ -13,6 +13,7 @@ import com.postsmith.api.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -25,30 +26,35 @@ public class ContentStatsService {
     private final ContentVisitsRepository contentVisitsRepository;
     private final ContentsRepository contentsRepository;
     private final UsersRepository usersRepository;
-
+    @Transactional
     public ContentViewsDto recordView(ContentViewsDto contentViewsDto) {
         Optional<ContentsEntity> opContent = contentsRepository.findById(contentViewsDto.getContentId());
         if(opContent.isPresent()) {
-            ContentsEntity content = opContent.get();
-            LocalDate today = LocalDate.now();
-            Optional<ContentViewsEntity> entity = contentViewsRepository.findByContentAndCreatedOn(content, today);
-            if (entity.isEmpty()) {
-                // 오늘 날짜에 해당하는 조회 기록이 없으면 새로 생성
-                entity = Optional.of(ContentViewsEntity.builder()
-                        .content(content)
-                        .createdOn(today)
-                        .viewsCount(0)
-                        .build());
-                return contentViewsRepository.save(entity.get()).toDto();
-            }else{
-                // 오늘 날짜에 해당하는 조회 기록이 있으면 조회수 증가
-                ContentViewsEntity existingEntity = entity.get();
-                existingEntity.incrementViewsCount();
-                return contentViewsRepository.save(existingEntity).toDto();
+            try {
+                // UPSERT 방식으로 조회수 기록/증가
+                contentViewsRepository.upsertViewCount(contentViewsDto.getContentId());
+                
+                // 업데이트된 결과를 조회해서 반환
+                ContentsEntity content = opContent.get();
+                LocalDate today = LocalDate.now();
+                Optional<ContentViewsEntity> entity = contentViewsRepository.findByContentAndCreatedOn(content, today);
+                
+                if (entity.isPresent()) {
+                    return entity.get().toDto();
+                } else {
+                    // 만약 조회되지 않는다면 기본값 반환
+                    return ContentViewsDto.builder()
+                            .contentId(contentViewsDto.getContentId())
+                            .viewsCount(1)
+                            .createdOn(today)
+                            .build();
+                }
+            } catch (Exception e) {
+                log.error("Failed to record view for contentId: {}", contentViewsDto.getContentId(), e);
+                throw new RuntimeException("Failed to record content view", e);
             }
         } else {
             throw new IllegalArgumentException("Content with id " + contentViewsDto.getContentId() + " does not exist.");
-
         }
     }
 

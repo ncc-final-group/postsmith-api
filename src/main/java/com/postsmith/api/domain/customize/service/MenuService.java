@@ -30,4 +30,17 @@ public class MenuService {
 	public List<MenuDto> getMenus(BlogsEntity blog) {
 		return menuRepository.findAllByBlog(blog).stream().map(MenuDto::fromEntity).toList();
 	}
+
+	public MenuDto addMenu(MenuDto menuDto, BlogsEntity blog) {
+		MenuEntity entity = MenuEntity.builder()
+				.blog(blog)
+				.name(menuDto.getName())
+				.uri(menuDto.getUri())
+				.type(MenuEntity.MenuEnum.valueOf(menuDto.getType()))
+				.isBlank(menuDto.isBlank())
+				.build();
+
+		MenuEntity savedEntity = menuRepository.save(entity);
+		return MenuDto.fromEntity(savedEntity);
+	}
 }
